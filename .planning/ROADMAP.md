@@ -39,16 +39,16 @@
 - Validate aircraft selection criteria per mode
 - Ensure no cross-mode contamination
 
-### Phase 4: Aviation-Specific Clue Enhancement
+### Phase 4: Aviation-Specific Clue Enhancement [COMPLETED]
 **Objective:** Update clue content to be aviation-specific and improve clue quality.
-**Research:** Yes - Identify best aviation-specific data points from Wikidata
+**Status:** COMPLETED (7 commits)
 **Scope:**
-- Update specs clue fields (add range, speed, ceiling if available)
-- Enhance context clues with aviation-specific details
-- Improve trivia extraction with aviation keywords
-- Update clue labels and terminology
-- Add manufacturer information where relevant
-- Consider role/mission type as clue
+- Aligned frontend/backend clue type definitions
+- SpecsClue displays: Role, Manufacturer, Wingspan, First Flight
+- ContextClue displays: Nation, Notable Conflicts, Status
+- Added 30+ aviation-specific trivia extraction keywords
+- Expanded Commercial mode aircraft types
+- Updated tests for new clue structure
 
 ### Phase 5: Silhouette Generation Improvements
 **Objective:** Improve silhouette quality and reliability for aircraft images.
