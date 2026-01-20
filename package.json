@@ -13,7 +13,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "generate:aircraft": "npx tsx scripts/generate-aircraft-list.ts"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",
