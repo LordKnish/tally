@@ -113,7 +113,7 @@ const CRON_SECRET = process.env.CRON_SECRET;
 // Game Mode Configuration
 // ============================================================================
 
-type GameModeId = 'main' | 'commercial' | 'ww2' | 'ww1' | 'helicopters' | 'drones';
+type GameModeId = 'main' | 'commercial' | 'ww2' | 'goldenage';
 
 interface ModeConfig {
   id: GameModeId;
@@ -182,41 +182,25 @@ const GAME_MODES: Record<GameModeId, ModeConfig> = {
       'Q753779',    // trainer aircraft
     ],
   },
-  ww1: {
-    id: 'ww1',
-    name: 'WW1',
-    yearMin: 1910,
-    yearMax: 1925,
+  goldenage: {
+    id: 'goldenage',
+    name: 'Golden Age',
+    yearMin: null,
+    yearMax: 1940,  // Pre-1940: WW1, barnstormers, interwar pioneers
     aircraftTypes: [
-      'Q11436',     // aircraft (general - WW1 era less specific)
+      'Q11436',     // aircraft (general)
       'Q127771',    // fighter aircraft
       'Q170877',    // bomber
       'Q127134',    // biplane
       'Q180352',    // reconnaissance aircraft
-    ],
-  },
-  helicopters: {
-    id: 'helicopters',
-    name: 'Helicopters',
-    yearMin: null,
-    yearMax: null,
-    aircraftTypes: [
-      'Q34486',     // helicopter
-    ],
-  },
-  drones: {
-    id: 'drones',
-    name: 'Drones',
-    yearMin: null,
-    yearMax: null,
-    aircraftTypes: [
-      'Q484000',    // UAV
+      'Q753779',    // trainer aircraft
+      'Q15056993',  // attack aircraft
     ],
   },
 };
 
-const ALL_MODE_IDS: GameModeId[] = ['main', 'commercial', 'ww2', 'ww1', 'helicopters', 'drones'];
-const BONUS_MODE_IDS: GameModeId[] = ['commercial', 'ww2', 'ww1', 'helicopters', 'drones'];
+const ALL_MODE_IDS: GameModeId[] = ['main', 'commercial', 'ww2', 'goldenage'];
+const BONUS_MODE_IDS: GameModeId[] = ['commercial', 'ww2', 'goldenage'];
 
 // ============================================================================
 // Database Functions (Neon PostgreSQL)
