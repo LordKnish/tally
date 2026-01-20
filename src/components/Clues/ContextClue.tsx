@@ -103,11 +103,6 @@ export function ContextClue({
   revealed,
   className = '',
 }: ContextClueProps) {
-  const conflictsText =
-    data.conflicts.length > 0
-      ? data.conflicts.join(', ')
-      : null;
-
   const flag = getFlagForNation(data.nation);
 
   return (
@@ -123,15 +118,6 @@ export function ContextClue({
           <dd className="context-clue__value">
             {flag && <span className="context-clue__flag" aria-hidden="true">{flag}</span>}
             {data.nation}
-          </dd>
-        </div>
-
-        <div className="context-clue__item">
-          <dt className="context-clue__label">Notable Conflicts</dt>
-          <dd className="context-clue__value">
-            {conflictsText ?? (
-              <span className="context-clue__none">None recorded</span>
-            )}
           </dd>
         </div>
 
