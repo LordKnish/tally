@@ -4,7 +4,7 @@
  * Can also be triggered manually for any mode.
  *
  * Query parameters:
- *   mode: 'main' | 'ww2' | 'coldwar' | 'carrier' | 'submarine' | 'coastguard'
+ *   mode: 'main' | 'commercial' | 'ww2' | 'ww1' | 'helicopters' | 'drones'
  *   all: 'true' = bonus modes only, 'everything' = all modes including main
  *   manual: If 'true', allows manual trigger with secret
  *   secret: CRON_SECRET for manual triggers
@@ -23,9 +23,9 @@ import * as photon from '@silvia-odwyer/photon-node';
 
 interface SpecsClue {
   class: string | null;
-  displacement: string | null;
-  length: string | null;
-  commissioned: string | null;
+  manufacturer: string | null;
+  wingspan: string | null;
+  firstFlight: string | null;
 }
 
 interface ContextClue {
@@ -41,7 +41,7 @@ interface GameClues {
   photo: string;
 }
 
-interface ShipIdentity {
+interface AircraftIdentity {
   id: string;
   name: string;
   aliases: string[];
@@ -49,27 +49,28 @@ interface ShipIdentity {
 
 interface GameData {
   date: string;
-  ship: ShipIdentity;
+  aircraft: AircraftIdentity;
   silhouette: string;
   clues: GameClues;
 }
 
-interface WikidataShipResult {
-  ship: { value: string };
-  shipLabel: { value: string };
+interface WikidataAircraftResult {
+  aircraft: { value: string };
+  aircraftLabel: { value: string };
   image?: { value: string };
   class?: { value: string };
   classLabel?: { value: string };
   country?: { value: string };
   countryLabel?: { value: string };
-  operator?: { value: string };
-  operatorLabel?: { value: string };
-  operatorCountry?: { value: string };
-  operatorCountryLabel?: { value: string };
+  manufacturer?: { value: string };
+  manufacturerLabel?: { value: string };
+  manufacturerCountry?: { value: string };
+  manufacturerCountryLabel?: { value: string };
+  wingspan?: { value: string };
   length?: { value: string };
-  displacement?: { value: string };
-  commissioned?: { value: string };
-  decommissioned?: { value: string };
+  firstFlight?: { value: string };
+  introduced?: { value: string };
+  retired?: { value: string };
   status?: { value: string };
   statusLabel?: { value: string };
   conflict?: { value: string };
@@ -77,16 +78,18 @@ interface WikidataShipResult {
   article?: { value: string };
 }
 
-interface SelectedShip {
+interface SelectedAircraft {
   id: string;
   name: string;
   imageUrl: string;
   className: string | null;
   country: string | null;
+  wingspan: string | null;
   length: string | null;
-  displacement: string | null;
-  commissioned: string | null;
-  decommissioned: string | null;
+  manufacturer: string | null;
+  firstFlight: string | null;
+  introduced: string | null;
+  retired: string | null;
   status: string | null;
   conflicts: string[];
   wikipediaTitle: string | null;
@@ -103,89 +106,132 @@ interface WikipediaSummary {
 // ============================================================================
 
 const SPARQL_ENDPOINT = 'https://query.wikidata.org/sparql';
-const USER_AGENT = 'Mozilla/5.0 (compatible; KeelGame/1.0; +https://github.com/keel-game)';
+const USER_AGENT = 'Mozilla/5.0 (compatible; TallyGame/1.0; +https://github.com/tally-game)';
 const CRON_SECRET = process.env.CRON_SECRET;
 
 // ============================================================================
 // Game Mode Configuration
 // ============================================================================
 
-type GameModeId = 'main' | 'ww2' | 'coldwar' | 'carrier' | 'submarine' | 'coastguard';
+type GameModeId = 'main' | 'commercial' | 'ww2' | 'ww1' | 'helicopters' | 'drones';
 
 interface ModeConfig {
   id: GameModeId;
   name: string;
   yearMin: number | null;
   yearMax: number | null;
-  shipTypes: string[];
+  aircraftTypes: string[];
 }
+
+/**
+ * Aircraft type Q-IDs from Wikidata:
+ * Q11436 = aircraft
+ * Q127771 = fighter aircraft
+ * Q170877 = bomber
+ * Q197380 = transport aircraft
+ * Q34486 = helicopter
+ * Q210932 = airliner
+ * Q484000 = UAV (unmanned aerial vehicle)
+ * Q216916 = military aircraft
+ * Q127134 = biplane
+ * Q6879 = jet aircraft
+ * Q15056993 = attack aircraft
+ * Q28885102 = multirole combat aircraft
+ * Q180352 = reconnaissance aircraft
+ * Q1420024 = business jet
+ * Q753779 = trainer aircraft
+ */
 
 const GAME_MODES: Record<GameModeId, ModeConfig> = {
   main: {
     id: 'main',
-    name: 'Daily Keel',
+    name: 'Daily Tally',
     yearMin: 1980,
     yearMax: null,
-    shipTypes: ['Q174736', 'Q182531', 'Q17205', 'Q104843', 'Q161705', 'Q170013', 'Q2811', 'Q2607934'],
+    aircraftTypes: [
+      'Q127771',    // fighter aircraft
+      'Q170877',    // bomber
+      'Q15056993',  // attack aircraft
+      'Q28885102',  // multirole combat aircraft
+      'Q180352',    // reconnaissance aircraft
+      'Q753779',    // trainer aircraft
+    ],
+  },
+  commercial: {
+    id: 'commercial',
+    name: 'Commercial',
+    yearMin: 1980,
+    yearMax: null,
+    aircraftTypes: [
+      'Q210932',    // airliner
+      'Q197380',    // transport aircraft
+      'Q1420024',   // business jet
+    ],
   },
   ww2: {
     id: 'ww2',
     name: 'WW2',
-    yearMin: 1939,
-    yearMax: 1945,
-    shipTypes: ['Q174736', 'Q182531', 'Q17205', 'Q104843', 'Q161705', 'Q170013', 'Q2811'],
+    yearMin: 1935,
+    yearMax: 1950,
+    aircraftTypes: [
+      'Q127771',    // fighter aircraft
+      'Q170877',    // bomber
+      'Q15056993',  // attack aircraft
+      'Q180352',    // reconnaissance aircraft
+      'Q753779',    // trainer aircraft
+    ],
   },
-  coldwar: {
-    id: 'coldwar',
-    name: 'Cold War',
-    yearMin: 1947,
-    yearMax: 1991,
-    shipTypes: ['Q174736', 'Q182531', 'Q17205', 'Q104843', 'Q161705', 'Q170013', 'Q2811'],
+  ww1: {
+    id: 'ww1',
+    name: 'WW1',
+    yearMin: 1910,
+    yearMax: 1925,
+    aircraftTypes: [
+      'Q11436',     // aircraft (general - WW1 era less specific)
+      'Q127771',    // fighter aircraft
+      'Q170877',    // bomber
+      'Q127134',    // biplane
+      'Q180352',    // reconnaissance aircraft
+    ],
   },
-  carrier: {
-    id: 'carrier',
-    name: 'Aircraft Carrier',
+  helicopters: {
+    id: 'helicopters',
+    name: 'Helicopters',
     yearMin: null,
     yearMax: null,
-    shipTypes: ['Q17205'],
+    aircraftTypes: [
+      'Q34486',     // helicopter
+    ],
   },
-  submarine: {
-    id: 'submarine',
-    name: 'Submarine',
+  drones: {
+    id: 'drones',
+    name: 'Drones',
     yearMin: null,
     yearMax: null,
-    shipTypes: ['Q4818021', 'Q2811', 'Q683570', 'Q17005311', 'Q757587', 'Q757554'],
-  },
-  coastguard: {
-    id: 'coastguard',
-    name: 'Small Ships',
-    yearMin: null,
-    yearMax: null,
-    shipTypes: ['Q331795', 'Q11479409', 'Q10316200', 'Q683363'],
+    aircraftTypes: [
+      'Q484000',    // UAV
+    ],
   },
 };
 
-const ALL_MODE_IDS: GameModeId[] = ['main', 'ww2', 'coldwar', 'carrier', 'submarine', 'coastguard'];
-const BONUS_MODE_IDS: GameModeId[] = ['ww2', 'coldwar', 'carrier', 'submarine', 'coastguard'];
-
-// Legacy constant for backward compatibility
-const SHIP_TYPES = GAME_MODES.main.shipTypes;
+const ALL_MODE_IDS: GameModeId[] = ['main', 'commercial', 'ww2', 'ww1', 'helicopters', 'drones'];
+const BONUS_MODE_IDS: GameModeId[] = ['commercial', 'ww2', 'ww1', 'helicopters', 'drones'];
 
 // ============================================================================
 // Database Functions (Neon PostgreSQL)
 // ============================================================================
 
-async function getUsedShipIds(mode: GameModeId = 'main'): Promise<string[]> {
+async function getUsedAircraftIds(mode: GameModeId = 'main'): Promise<string[]> {
   try {
     const result = await sql`SELECT wikidata_id FROM used_ships WHERE mode = ${mode}`;
     return result.rows.map((row) => row.wikidata_id);
   } catch (error) {
-    console.error(`Failed to fetch used ships for ${mode}:`, error);
+    console.error(`Failed to fetch used aircraft for ${mode}:`, error);
     return [];
   }
 }
 
-async function markShipUsed(id: string, name: string, mode: GameModeId = 'main'): Promise<void> {
+async function markAircraftUsed(id: string, name: string, mode: GameModeId = 'main'): Promise<void> {
   try {
     await sql`
       INSERT INTO used_ships (wikidata_id, name, used_date, mode)
@@ -194,16 +240,16 @@ async function markShipUsed(id: string, name: string, mode: GameModeId = 'main')
     `;
     console.log(`Marked ${name} (${id}) as used in ${mode}`);
   } catch (error) {
-    console.error('Failed to mark ship as used:', error);
+    console.error('Failed to mark aircraft as used:', error);
     throw error;
   }
 }
 
 async function saveGameData(gameData: GameData, mode: GameModeId = 'main'): Promise<void> {
-  const { date, ship, silhouette, clues } = gameData;
+  const { date, aircraft, silhouette, clues } = gameData;
 
   // Convert arrays to PostgreSQL array format
-  const aliasesArray = `{${ship.aliases.map(a => `"${a.replace(/"/g, '\\"')}"`).join(',')}}`;
+  const aliasesArray = `{${aircraft.aliases.map(a => `"${a.replace(/"/g, '\\"')}"`).join(',')}}`;
   const conflictsArray = `{${clues.context.conflicts.map(c => `"${c.replace(/"/g, '\\"')}"`).join(',')}}`;
 
   try {
@@ -227,14 +273,14 @@ async function saveGameData(gameData: GameData, mode: GameModeId = 'main'): Prom
       ) VALUES (
         ${date}::date,
         ${mode},
-        ${ship.id},
-        ${ship.name},
+        ${aircraft.id},
+        ${aircraft.name},
         ${aliasesArray}::text[],
         ${silhouette},
         ${clues.specs.class},
-        ${clues.specs.displacement},
-        ${clues.specs.length},
-        ${clues.specs.commissioned},
+        ${clues.specs.manufacturer},
+        ${clues.specs.wingspan},
+        ${clues.specs.firstFlight},
         ${clues.context.nation},
         ${conflictsArray}::text[],
         ${clues.context.status},
@@ -270,13 +316,13 @@ async function saveGameData(gameData: GameData, mode: GameModeId = 'main'): Prom
 
 function buildYearFilter(mode: ModeConfig): string {
   if (mode.yearMin !== null && mode.yearMax !== null) {
-    return `FILTER(YEAR(?commissioned) >= ${mode.yearMin} && YEAR(?commissioned) <= ${mode.yearMax})`;
+    return `FILTER(YEAR(?firstFlight) >= ${mode.yearMin} && YEAR(?firstFlight) <= ${mode.yearMax})`;
   }
   if (mode.yearMin !== null) {
-    return `FILTER(YEAR(?commissioned) >= ${mode.yearMin})`;
+    return `FILTER(YEAR(?firstFlight) >= ${mode.yearMin})`;
   }
   if (mode.yearMax !== null) {
-    return `FILTER(YEAR(?commissioned) <= ${mode.yearMax})`;
+    return `FILTER(YEAR(?firstFlight) <= ${mode.yearMax})`;
   }
   return ''; // No year filter
 }
@@ -284,28 +330,29 @@ function buildYearFilter(mode: ModeConfig): string {
 function buildCountQuery(excludeIds: string[], mode: ModeConfig): string {
   const excludeFilter =
     excludeIds.length > 0
-      ? `FILTER(?ship NOT IN (${excludeIds.map((id) => `wd:${id}`).join(', ')}))`
+      ? `FILTER(?aircraft NOT IN (${excludeIds.map((id) => `wd:${id}`).join(', ')}))`
       : '';
 
-  const typeValues = mode.shipTypes.map((t) => `wd:${t}`).join(' ');
+  const typeValues = mode.aircraftTypes.map((t) => `wd:${t}`).join(' ');
   const yearFilter = buildYearFilter(mode);
 
   return `
-SELECT (COUNT(DISTINCT ?ship) AS ?count)
+SELECT (COUNT(DISTINCT ?aircraft) AS ?count)
 WHERE {
   VALUES ?type { ${typeValues} }
-  ?ship wdt:P31 ?type .
-  ?ship wdt:P18 ?image .
-  ?ship wdt:P729 ?commissioned .
-  ?ship wdt:P289 ?class .
+  ?aircraft wdt:P31 ?type .
+  ?aircraft wdt:P18 ?image .
 
-  OPTIONAL { ?ship wdt:P2043 ?length . }
-  OPTIONAL { ?ship wdt:P2386 ?displacement . }
-  FILTER(BOUND(?length) || BOUND(?displacement))
+  # First flight date (P606)
+  OPTIONAL { ?aircraft wdt:P606 ?firstFlight . }
+  # Introduction date (P729) as fallback
+  OPTIONAL { ?aircraft wdt:P729 ?introduced . }
+  BIND(COALESCE(?firstFlight, ?introduced) AS ?flightDate)
+  FILTER(BOUND(?flightDate))
 
   ${yearFilter}
 
-  ?ship rdfs:label ?label .
+  ?aircraft rdfs:label ?label .
   FILTER(LANG(?label) = "en")
   FILTER(!STRSTARTS(?label, "Q"))
 
@@ -314,65 +361,74 @@ WHERE {
   `.trim();
 }
 
-function buildShipQuery(excludeIds: string[], offset: number, mode: ModeConfig): string {
+function buildAircraftQuery(excludeIds: string[], offset: number, mode: ModeConfig): string {
   const excludeFilter =
     excludeIds.length > 0
-      ? `FILTER(?ship NOT IN (${excludeIds.map((id) => `wd:${id}`).join(', ')}))`
+      ? `FILTER(?aircraft NOT IN (${excludeIds.map((id) => `wd:${id}`).join(', ')}))`
       : '';
 
-  const typeValues = mode.shipTypes.map((t) => `wd:${t}`).join(' ');
+  const typeValues = mode.aircraftTypes.map((t) => `wd:${t}`).join(' ');
   const yearFilter = buildYearFilter(mode);
 
   return `
 SELECT DISTINCT
-  ?ship ?shipLabel
+  ?aircraft ?aircraftLabel
   ?image
   ?class ?classLabel
   ?country ?countryLabel
-  ?operator ?operatorLabel
-  ?operatorCountry ?operatorCountryLabel
-  ?length ?displacement
-  ?commissioned
+  ?manufacturer ?manufacturerLabel
+  ?manufacturerCountry ?manufacturerCountryLabel
+  ?wingspan ?length
+  ?firstFlight ?introduced ?retired
   ?conflict ?conflictLabel
-  ?decommissioned
   ?status ?statusLabel
   ?article
 WHERE {
   VALUES ?type { ${typeValues} }
-  ?ship wdt:P31 ?type .
-  ?ship wdt:P18 ?image .
-  ?ship wdt:P729 ?commissioned .
-  ?ship wdt:P289 ?class .
+  ?aircraft wdt:P31 ?type .
+  ?aircraft wdt:P18 ?image .
 
-  OPTIONAL { ?ship wdt:P2043 ?length . }
-  OPTIONAL { ?ship wdt:P2386 ?displacement . }
-  FILTER(BOUND(?length) || BOUND(?displacement))
+  # First flight date (P606)
+  OPTIONAL { ?aircraft wdt:P606 ?firstFlight . }
+  # Introduction date (P729) as fallback
+  OPTIONAL { ?aircraft wdt:P729 ?introduced . }
+  BIND(COALESCE(?firstFlight, ?introduced) AS ?flightDate)
+  FILTER(BOUND(?flightDate))
 
   ${yearFilter}
 
-  ?ship rdfs:label ?label .
+  ?aircraft rdfs:label ?label .
   FILTER(LANG(?label) = "en")
   FILTER(!STRSTARTS(?label, "Q"))
 
   ${excludeFilter}
 
-  OPTIONAL { ?ship wdt:P17 ?country . }
+  # Country of origin (P495)
+  OPTIONAL { ?aircraft wdt:P495 ?country . }
+  # Manufacturer (P176)
   OPTIONAL {
-    ?ship wdt:P137 ?operator .
-    OPTIONAL { ?operator wdt:P17 ?operatorCountry . }
+    ?aircraft wdt:P176 ?manufacturer .
+    OPTIONAL { ?manufacturer wdt:P17 ?manufacturerCountry . }
   }
-  OPTIONAL { ?ship wdt:P607 ?conflict . }
-  OPTIONAL { ?ship wdt:P730 ?decommissioned . }
-  OPTIONAL { ?ship wdt:P1308 ?status . }
+  # Wingspan (P2050) in meters
+  OPTIONAL { ?aircraft wdt:P2050 ?wingspan . }
+  # Length (P2043) in meters
+  OPTIONAL { ?aircraft wdt:P2043 ?length . }
+  # Conflicts (P607)
+  OPTIONAL { ?aircraft wdt:P607 ?conflict . }
+  # Retired date (P730)
+  OPTIONAL { ?aircraft wdt:P730 ?retired . }
+  # Service status (P1308)
+  OPTIONAL { ?aircraft wdt:P1308 ?status . }
 
   OPTIONAL {
-    ?article schema:about ?ship ;
+    ?article schema:about ?aircraft ;
              schema:isPartOf <https://en.wikipedia.org/> .
   }
 
   SERVICE wikibase:label { bd:serviceParam wikibase:language "en" . }
 }
-ORDER BY ?shipLabel
+ORDER BY ?aircraftLabel
 LIMIT 1
 OFFSET ${offset}
   `.trim();
@@ -404,7 +460,7 @@ async function executeSparql<T>(query: string): Promise<T[]> {
   return data.results.bindings;
 }
 
-async function getEligibleShipCount(excludeIds: string[], mode: ModeConfig): Promise<number> {
+async function getEligibleAircraftCount(excludeIds: string[], mode: ModeConfig): Promise<number> {
   const query = buildCountQuery(excludeIds, mode);
   const results = await executeSparql<{ count: { value: string } }>(query);
 
@@ -416,7 +472,7 @@ async function getEligibleShipCount(excludeIds: string[], mode: ModeConfig): Pro
 }
 
 // ============================================================================
-// Ship Selection Functions
+// Aircraft Selection Functions
 // ============================================================================
 
 function extractEntityId(uri: string): string {
@@ -442,7 +498,7 @@ function commonsFileToUrl(filename: string): string {
   return `https://commons.wikimedia.org/wiki/Special:FilePath/${encoded}`;
 }
 
-function parseShipResult(results: WikidataShipResult[]): SelectedShip {
+function parseAircraftResult(results: WikidataAircraftResult[]): SelectedAircraft {
   const first = results[0];
 
   const conflicts = new Set<string>();
@@ -455,10 +511,8 @@ function parseShipResult(results: WikidataShipResult[]): SelectedShip {
   let country: string | null = null;
   if (first.countryLabel?.value) {
     country = first.countryLabel.value;
-  } else if (first.operatorCountryLabel?.value) {
-    country = first.operatorCountryLabel.value;
-  } else if (first.operatorLabel?.value) {
-    country = first.operatorLabel.value;
+  } else if (first.manufacturerCountryLabel?.value) {
+    country = first.manufacturerCountryLabel.value;
   }
 
   let wikipediaTitle: string | null = null;
@@ -470,14 +524,14 @@ function parseShipResult(results: WikidataShipResult[]): SelectedShip {
   }
 
   let status: string | null = null;
-  const decommissioned = first.decommissioned?.value
-    ? new Date(first.decommissioned.value).getFullYear().toString()
+  const retired = first.retired?.value
+    ? new Date(first.retired.value).getFullYear().toString()
     : null;
 
   if (first.statusLabel?.value) {
     status = first.statusLabel.value;
-  } else if (decommissioned) {
-    status = `Decommissioned ${decommissioned}`;
+  } else if (retired) {
+    status = `Retired ${retired}`;
   } else {
     const conflictArray = Array.from(conflicts);
     const recentConflicts = conflictArray.filter((c) => {
@@ -497,57 +551,63 @@ function parseShipResult(results: WikidataShipResult[]): SelectedShip {
     }
   }
 
+  const firstFlight = first.firstFlight?.value
+    ? new Date(first.firstFlight.value).getFullYear().toString()
+    : first.introduced?.value
+      ? new Date(first.introduced.value).getFullYear().toString()
+      : null;
+
   return {
-    id: extractEntityId(first.ship.value),
-    name: first.shipLabel.value,
+    id: extractEntityId(first.aircraft.value),
+    name: first.aircraftLabel.value,
     imageUrl: first.image?.value
       ? commonsFileToUrl(first.image.value.split('/').pop() || '')
       : '',
     className: first.classLabel?.value || null,
     country,
+    wingspan: first.wingspan?.value ? `${Math.round(parseFloat(first.wingspan.value))}m` : null,
     length: first.length?.value ? `${Math.round(parseFloat(first.length.value))}m` : null,
-    displacement: first.displacement?.value
-      ? `${Math.round(parseFloat(first.displacement.value)).toLocaleString()} tons`
+    manufacturer: first.manufacturerLabel?.value || null,
+    firstFlight,
+    introduced: first.introduced?.value
+      ? new Date(first.introduced.value).getFullYear().toString()
       : null,
-    commissioned: first.commissioned?.value
-      ? new Date(first.commissioned.value).getFullYear().toString()
-      : null,
-    decommissioned,
+    retired,
     status,
     conflicts: Array.from(conflicts),
     wikipediaTitle,
   };
 }
 
-async function selectRandomShip(excludeIds: string[], mode: ModeConfig): Promise<SelectedShip | null> {
-  console.log(`Counting eligible ships for ${mode.name} (excluding ${excludeIds.length})...`);
+async function selectRandomAircraft(excludeIds: string[], mode: ModeConfig): Promise<SelectedAircraft | null> {
+  console.log(`Counting eligible aircraft for ${mode.name} (excluding ${excludeIds.length})...`);
 
-  const count = await getEligibleShipCount(excludeIds, mode);
-  console.log(`Found ${count} eligible ships`);
+  const count = await getEligibleAircraftCount(excludeIds, mode);
+  console.log(`Found ${count} eligible aircraft`);
 
   if (count === 0) {
     return null;
   }
 
   const offset = Math.floor(Math.random() * count);
-  console.log(`Selecting ship at offset ${offset}...`);
+  console.log(`Selecting aircraft at offset ${offset}...`);
 
-  const query = buildShipQuery(excludeIds, offset, mode);
-  const results = await executeSparql<WikidataShipResult>(query);
+  const query = buildAircraftQuery(excludeIds, offset, mode);
+  const results = await executeSparql<WikidataAircraftResult>(query);
 
   if (results.length === 0) {
-    console.warn('No ship found at offset, retrying...');
+    console.warn('No aircraft found at offset, retrying...');
     const newOffset = Math.floor(Math.random() * count);
-    const retryResults = await executeSparql<WikidataShipResult>(
-      buildShipQuery(excludeIds, newOffset, mode)
+    const retryResults = await executeSparql<WikidataAircraftResult>(
+      buildAircraftQuery(excludeIds, newOffset, mode)
     );
     if (retryResults.length === 0) {
       return null;
     }
-    return parseShipResult(retryResults);
+    return parseAircraftResult(retryResults);
   }
 
-  return parseShipResult(results);
+  return parseAircraftResult(results);
 }
 
 // ============================================================================
@@ -588,9 +648,9 @@ function extractTrivia(summary: WikipediaSummary | null): string | null {
 
   const interestingKeywords = [
     'famous', 'notable', 'first', 'last', 'only', 'largest', 'fastest',
-    'sunk', 'battle', 'war', 'attack', 'served', 'participated',
+    'shot down', 'crashed', 'battle', 'war', 'attack', 'served', 'participated',
     'known for', 'renamed', 'converted', 'museum', 'memorial',
-    'preserved', 'film', 'movie',
+    'preserved', 'film', 'movie', 'prototype', 'experimental',
   ];
 
   for (const sentence of sentences.slice(1)) {
@@ -611,30 +671,30 @@ function extractTrivia(summary: WikipediaSummary | null): string | null {
   return null;
 }
 
-function buildSpecsClue(ship: SelectedShip): SpecsClue {
+function buildSpecsClue(aircraft: SelectedAircraft): SpecsClue {
   return {
-    class: ship.className,
-    displacement: ship.displacement,
-    length: ship.length,
-    commissioned: ship.commissioned,
+    class: aircraft.className,
+    manufacturer: aircraft.manufacturer,
+    wingspan: aircraft.wingspan,
+    firstFlight: aircraft.firstFlight,
   };
 }
 
-function buildContextClue(ship: SelectedShip): ContextClue {
+function buildContextClue(aircraft: SelectedAircraft): ContextClue {
   return {
-    nation: ship.country || 'Unknown',
-    conflicts: ship.conflicts,
-    status: ship.status,
+    nation: aircraft.country || 'Unknown',
+    conflicts: aircraft.conflicts,
+    status: aircraft.status,
   };
 }
 
-async function fetchClues(ship: SelectedShip): Promise<GameClues> {
-  console.log(`Fetching clues for ${ship.name}...`);
+async function fetchClues(aircraft: SelectedAircraft): Promise<GameClues> {
+  console.log(`Fetching clues for ${aircraft.name}...`);
 
   let trivia: string | null = null;
-  if (ship.wikipediaTitle) {
-    console.log(`  Fetching Wikipedia summary for ${ship.wikipediaTitle}...`);
-    const summary = await fetchWikipediaSummary(ship.wikipediaTitle);
+  if (aircraft.wikipediaTitle) {
+    console.log(`  Fetching Wikipedia summary for ${aircraft.wikipediaTitle}...`);
+    const summary = await fetchWikipediaSummary(aircraft.wikipediaTitle);
     trivia = extractTrivia(summary);
     if (trivia) {
       console.log(`  Found trivia: "${trivia.substring(0, 50)}..."`);
@@ -642,10 +702,10 @@ async function fetchClues(ship: SelectedShip): Promise<GameClues> {
   }
 
   return {
-    specs: buildSpecsClue(ship),
-    context: buildContextClue(ship),
+    specs: buildSpecsClue(aircraft),
+    context: buildContextClue(aircraft),
     trivia,
-    photo: ship.imageUrl,
+    photo: aircraft.imageUrl,
   };
 }
 
@@ -777,7 +837,7 @@ async function generateLineArtFromUrl(imageUrl: string): Promise<string> {
 interface GenerationResult {
   success: boolean;
   mode: GameModeId;
-  ship?: { id: string; name: string; class: string | null };
+  aircraft?: { id: string; name: string; class: string | null };
   date?: string;
   error?: string;
   silhouetteSizeKB?: number;
@@ -794,56 +854,56 @@ async function generateForMode(
   console.log(`Generating: ${mode.name}`);
   console.log(`${'='.repeat(60)}`);
 
-  // 1. Load used ships for this mode
-  const usedIds = await getUsedShipIds(mode.id);
-  console.log(`Used ships in ${mode.id}: ${usedIds.length}`);
+  // 1. Load used aircraft for this mode
+  const usedIds = await getUsedAircraftIds(mode.id);
+  console.log(`Used aircraft in ${mode.id}: ${usedIds.length}`);
 
-  // 2. Select random ship (with trivia if required)
+  // 2. Select random aircraft (with trivia if required)
   const excludeIds = [...usedIds];
-  let ship: SelectedShip | null = null;
+  let aircraft: SelectedAircraft | null = null;
   let clues: GameClues | null = null;
 
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
-    console.log(`\nSelecting random ship (attempt ${attempt}/${MAX_RETRIES})...`);
-    ship = await selectRandomShip(excludeIds, mode);
+    console.log(`\nSelecting random aircraft (attempt ${attempt}/${MAX_RETRIES})...`);
+    aircraft = await selectRandomAircraft(excludeIds, mode);
 
-    if (!ship) {
+    if (!aircraft) {
       return {
         success: false,
         mode: mode.id,
-        error: 'No eligible ships found',
+        error: 'No eligible aircraft found',
       };
     }
 
-    console.log(`\nSelected: ${ship.name} (${ship.id})`);
-    console.log(`  Country: ${ship.country || 'Unknown'}`);
-    console.log(`  Class: ${ship.className || 'Unknown'}`);
-    console.log(`  Commissioned: ${ship.commissioned || 'Unknown'}`);
+    console.log(`\nSelected: ${aircraft.name} (${aircraft.id})`);
+    console.log(`  Country: ${aircraft.country || 'Unknown'}`);
+    console.log(`  Class: ${aircraft.className || 'Unknown'}`);
+    console.log(`  First Flight: ${aircraft.firstFlight || 'Unknown'}`);
 
     // 3. Fetch clues
     console.log('\nFetching clue data...');
-    clues = await fetchClues(ship);
+    clues = await fetchClues(aircraft);
 
     if (!requireTrivia || clues.trivia) {
       if (clues.trivia) {
-        console.log('  Trivia found, proceeding with this ship.');
+        console.log('  Trivia found, proceeding with this aircraft.');
       }
       break;
     }
 
-    console.log('  No trivia found, trying another ship...');
-    excludeIds.push(ship.id);
-    ship = null;
+    console.log('  No trivia found, trying another aircraft...');
+    excludeIds.push(aircraft.id);
+    aircraft = null;
     clues = null;
   }
 
-  if (!ship || !clues) {
+  if (!aircraft || !clues) {
     return {
       success: false,
       mode: mode.id,
       error: requireTrivia
-        ? `No ship with trivia found after ${MAX_RETRIES} attempts`
-        : 'No eligible ships found',
+        ? `No aircraft with trivia found after ${MAX_RETRIES} attempts`
+        : 'No eligible aircraft found',
     };
   }
 
@@ -851,7 +911,7 @@ async function generateForMode(
   console.log('\nGenerating line art...');
   let silhouette: string;
   try {
-    silhouette = await generateLineArtFromUrl(ship.imageUrl);
+    silhouette = await generateLineArtFromUrl(aircraft.imageUrl);
   } catch (error) {
     return {
       success: false,
@@ -861,19 +921,19 @@ async function generateForMode(
   }
 
   // 5. Build game data
-  const shipIdentity: ShipIdentity = {
-    id: ship.id,
-    name: ship.name,
+  const aircraftIdentity: AircraftIdentity = {
+    id: aircraft.id,
+    name: aircraft.name,
     aliases: [],
   };
 
-  if (ship.className) {
-    shipIdentity.aliases.push(ship.className);
+  if (aircraft.className) {
+    aircraftIdentity.aliases.push(aircraft.className);
   }
 
   const gameData: GameData = {
     date: gameDate,
-    ship: shipIdentity,
+    aircraft: aircraftIdentity,
     silhouette: `data:image/png;base64,${silhouette}`,
     clues,
   };
@@ -882,15 +942,15 @@ async function generateForMode(
   console.log('\nSaving game data to database...');
   await saveGameData(gameData, mode.id);
 
-  // 7. Mark ship as used
-  await markShipUsed(ship.id, ship.name, mode.id);
+  // 7. Mark aircraft as used
+  await markAircraftUsed(aircraft.id, aircraft.name, mode.id);
 
   console.log(`\n${mode.name} generation complete!`);
 
   return {
     success: true,
     mode: mode.id,
-    ship: { id: ship.id, name: ship.name, class: ship.className },
+    aircraft: { id: aircraft.id, name: aircraft.name, class: aircraft.className },
     date: gameDate,
     silhouetteSizeKB: Math.round(silhouette.length / 1024),
   };
@@ -927,7 +987,7 @@ export default async function handler(
 
   try {
     console.log('='.repeat(60));
-    console.log(`Keel Game Generator (${isManualTrigger ? 'Manual Trigger' : 'Vercel Cron'})`);
+    console.log(`Tally Game Generator (${isManualTrigger ? 'Manual Trigger' : 'Vercel Cron'})`);
     console.log(`Date: ${gameDate}`);
     if (request.query.all === 'everything') {
       console.log('Mode: ALL MODES (including main)');
@@ -977,7 +1037,7 @@ export default async function handler(
 
     for (const result of results) {
       if (result.success) {
-        console.log(`  ✓ ${result.mode}: ${result.ship?.name} (${result.ship?.class})`);
+        console.log(`  ✓ ${result.mode}: ${result.aircraft?.name} (${result.aircraft?.class})`);
       } else {
         console.log(`  ✗ ${result.mode}: ${result.error}`);
       }

@@ -3,7 +3,7 @@
  * GET /api/game/today?mode=main
  *
  * Query parameters:
- *   mode: 'main' | 'ww2' | 'coldwar' | 'carrier' | 'submarine' | 'coastguard'
+ *   mode: 'main' | 'commercial' | 'ww2' | 'ww1' | 'helicopters' | 'drones'
  *         Defaults to 'main' if not specified.
  *   all: If present, returns a summary of all available modes
  *
@@ -13,13 +13,13 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { sql } from '@vercel/postgres';
 
-type GameModeId = 'main' | 'ww2' | 'coldwar' | 'carrier' | 'submarine' | 'coastguard';
+type GameModeId = 'main' | 'commercial' | 'ww2' | 'ww1' | 'helicopters' | 'drones';
 
-const VALID_MODES: GameModeId[] = ['main', 'ww2', 'coldwar', 'carrier', 'submarine', 'coastguard'];
+const VALID_MODES: GameModeId[] = ['main', 'commercial', 'ww2', 'ww1', 'helicopters', 'drones'];
 
 interface GameData {
   date: string;
-  ship: {
+  aircraft: {
     id: string;
     name: string;
     aliases: string[];
@@ -28,9 +28,9 @@ interface GameData {
   clues: {
     specs: {
       class: string | null;
-      displacement: string | null;
-      length: string | null;
-      commissioned: string | null;
+      manufacturer: string | null;
+      wingspan: string | null;
+      firstFlight: string | null;
     };
     context: {
       nation: string;
@@ -72,7 +72,7 @@ export default async function handler(
           row.mode || 'main',
           {
             date: row.game_date?.toISOString().split('T')[0] || null,
-            ship: row.ship_name,
+            aircraft: row.ship_name,
             class: row.clues_specs_class,
           },
         ])
@@ -84,7 +84,7 @@ export default async function handler(
           mode: modeId,
           available: !!data,
           date: data?.date || null,
-          ship: data?.ship || null,
+          aircraft: data?.aircraft || null,
           class: data?.class || null,
           endpoint: `/api/game/today?mode=${modeId}`,
         };
@@ -134,7 +134,7 @@ export default async function handler(
       return response.status(404).json({
         success: false,
         mode,
-        error: `No game found for today in mode '${mode}'`,
+        error: `No game found for today in mode '${mode}'. Run: curl "/api/cron/generate-game?manual=true&secret=YOUR_SECRET&mode=${mode}"`,
         date: today,
       });
     }
@@ -144,7 +144,7 @@ export default async function handler(
     // Transform database row to GameData format
     const gameData: GameData = {
       date: row.game_date.toISOString().split('T')[0],
-      ship: {
+      aircraft: {
         id: row.ship_id,
         name: row.ship_name,
         aliases: row.ship_aliases || [],
@@ -153,9 +153,9 @@ export default async function handler(
       clues: {
         specs: {
           class: row.clues_specs_class,
-          displacement: row.clues_specs_displacement,
-          length: row.clues_specs_length,
-          commissioned: row.clues_specs_commissioned,
+          manufacturer: row.clues_specs_displacement,
+          wingspan: row.clues_specs_length,
+          firstFlight: row.clues_specs_commissioned,
         },
         context: {
           nation: row.clues_context_nation,

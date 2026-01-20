@@ -9,10 +9,10 @@
     }
   ],
   "rewrites": [
+    { "source": "/commercial", "destination": "/" },
     { "source": "/ww2", "destination": "/" },
-    { "source": "/cold-war", "destination": "/" },
-    { "source": "/carrier", "destination": "/" },
-    { "source": "/submarine", "destination": "/" },
-    { "source": "/small-ships", "destination": "/" }
+    { "source": "/ww1", "destination": "/" },
+    { "source": "/helicopters", "destination": "/" },
+    { "source": "/drones", "destination": "/" }
   ]
 }
