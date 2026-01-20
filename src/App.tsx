@@ -334,7 +334,7 @@ function App() {
             src={gameData.silhouette}
             alt="Mystery aircraft silhouette"
             photoUrl={gameData.clues.photo}
-            shipName={gameData.aircraft.name}
+            aircraftName={gameData.aircraft.name}
             showPhoto={getClueRevealed(4) || currentTurn >= 5}
           />
         }

@@ -15,7 +15,7 @@ describe('Silhouette', () => {
 
   it('uses default alt text', () => {
     render(<Silhouette src={testBase64Image} />);
-    expect(screen.getByAltText('Ship silhouette')).toBeInTheDocument();
+    expect(screen.getByAltText('Aircraft silhouette')).toBeInTheDocument();
   });
 
   it('accepts custom alt text', () => {
