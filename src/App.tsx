@@ -269,11 +269,17 @@ function App() {
     );
   }
 
-  if (error || !gameData) {
+  // Handle error state or placeholder data (no real game generated yet)
+  if (error || !gameData || gameData.aircraft.id === 'placeholder') {
     return (
       <div className="app app--error">
         <h1>Tally</h1>
-        <p className="error-message">Failed to load game data: {error}</p>
+        <p className="error-message">
+          {error || 'No game data available'}
+        </p>
+        <p className="error-hint">
+          Today's game may not have been generated yet. Please try again later.
+        </p>
       </div>
     );
   }
