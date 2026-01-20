@@ -124,6 +124,105 @@ async function executeSparql<T>(query: string): Promise<T[]> {
 }
 
 // ============================================================================
+// Aircraft Query
+// ============================================================================
+
+/**
+ * Result type for aircraft SPARQL query
+ */
+interface AircraftQueryResult {
+  aircraft: { value: string };
+  aircraftLabel: { value: string };
+  aliases?: { value: string };
+}
+
+/**
+ * Number of results per page for pagination
+ */
+const PAGE_SIZE = 500;
+
+/**
+ * Build SPARQL query for aircraft of a specific type
+ * Fetches ID, label, and aliases (skos:altLabel) for aircraft with images
+ *
+ * @param typeQid The Wikidata Q-ID for the aircraft type
+ * @param offset Pagination offset
+ * @returns SPARQL query string
+ */
+function buildAircraftQuery(typeQid: string, offset: number): string {
+  return `
+SELECT DISTINCT
+  ?aircraft
+  ?aircraftLabel
+  (GROUP_CONCAT(DISTINCT ?alias; SEPARATOR="|") AS ?aliases)
+WHERE {
+  # Aircraft of specified type with an image
+  ?aircraft wdt:P31 wd:${typeQid} .
+  ?aircraft wdt:P18 ?image .
+
+  # Get English label
+  ?aircraft rdfs:label ?aircraftLabel .
+  FILTER(LANG(?aircraftLabel) = "en")
+
+  # Filter out items without proper labels (just Q-numbers)
+  FILTER(!STRSTARTS(?aircraftLabel, "Q"))
+
+  # Get English aliases (optional)
+  OPTIONAL {
+    ?aircraft skos:altLabel ?alias .
+    FILTER(LANG(?alias) = "en")
+  }
+}
+GROUP BY ?aircraft ?aircraftLabel
+ORDER BY ?aircraftLabel
+LIMIT ${PAGE_SIZE}
+OFFSET ${offset}
+  `.trim();
+}
+
+/**
+ * Fetch all aircraft of a specific type from Wikidata
+ * Handles pagination automatically
+ *
+ * @param typeQid The Wikidata Q-ID for the aircraft type
+ * @param typeName Human-readable name for logging
+ * @returns Array of raw aircraft query results
+ */
+async function fetchAircraftByType(
+  typeQid: string,
+  typeName: string
+): Promise<AircraftQueryResult[]> {
+  console.log(`\nFetching ${typeName} (${typeQid})...`);
+
+  const allResults: AircraftQueryResult[] = [];
+  let offset = 0;
+  let hasMore = true;
+
+  while (hasMore) {
+    const query = buildAircraftQuery(typeQid, offset);
+    const results = await executeSparql<AircraftQueryResult>(query);
+
+    if (results.length === 0) {
+      hasMore = false;
+    } else {
+      allResults.push(...results);
+      console.log(`  Fetched ${results.length} aircraft (total: ${allResults.length})`);
+
+      if (results.length < PAGE_SIZE) {
+        hasMore = false;
+      } else {
+        offset += PAGE_SIZE;
+        // Rate limiting between paginated requests
+        await delay(QUERY_DELAY_MS);
+      }
+    }
+  }
+
+  console.log(`  Total ${typeName}: ${allResults.length}`);
+  return allResults;
+}
+
+// ============================================================================
 // Main Entry Point
 // ============================================================================
 
