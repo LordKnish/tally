@@ -293,7 +293,7 @@ function App() {
       <WinModal
         isOpen={showWinModal}
         className={gameData.aircraft.typeName || gameData.aircraft.aliases[0] || gameData.aircraft.name}
-        shipName={gameData.aircraft.name}
+        aircraftName={gameData.aircraft.name}
         guessCount={guessResults.length}
         totalTurns={totalTurns}
         guessResults={guessResults}

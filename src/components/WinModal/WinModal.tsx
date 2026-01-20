@@ -5,10 +5,10 @@ import './WinModal.css';
 export interface WinModalProps {
   /** Whether the modal is open */
   isOpen: boolean;
-  /** Ship class name (e.g., "Fletcher-class destroyer") */
+  /** Aircraft type name (e.g., "F-16 Fighting Falcon") */
   className: string;
-  /** Specific ship name (e.g., "USS Johnston") */
-  shipName: string;
+  /** Specific aircraft name (e.g., "F-16C Block 50") */
+  aircraftName: string;
   /** Number of guesses it took */
   guessCount: number;
   /** Total turns allowed */
@@ -25,12 +25,12 @@ export interface WinModalProps {
 
 /**
  * WinModal displays the victory screen with share functionality.
- * Shows class name prominently, ship name secondary, stats, and share button.
+ * Shows aircraft type name prominently, specific name secondary, stats, and share button.
  */
 export function WinModal({
   isOpen,
   className,
-  shipName,
+  aircraftName,
   guessCount,
   totalTurns,
   guessResults,
@@ -62,7 +62,7 @@ export function WinModal({
 
     const timeStr = formatTime(timeTaken);
 
-    return `⚓ Keel ${modeName} ${today}\n🚢 ${guessCount}/${totalTurns} • ⏱️ ${timeStr}\n${resultEmojis}\n\nPlay at: ${window.location.href}`;
+    return `✈️ Tally ${modeName} ${today}\n✈️ ${guessCount}/${totalTurns} • ⏱️ ${timeStr}\n${resultEmojis}\n\nPlay at: ${window.location.href}`;
   }, [guessResults, guessCount, totalTurns, timeTaken, modeName]);
 
   const handleCopy = useCallback(async () => {
@@ -85,8 +85,8 @@ export function WinModal({
 
   if (!isOpen) return null;
 
-  // Display class name as primary with ship name in parentheses
-  const displayText = `${className} (${shipName})`;
+  // Display type name as primary with aircraft name in parentheses
+  const displayText = `${className} (${aircraftName})`;
 
   return (
     <div className="win-modal-overlay" onClick={onClose}>
