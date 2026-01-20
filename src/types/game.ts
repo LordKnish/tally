@@ -105,8 +105,3 @@ export interface GameState {
   isWin: boolean;
 }
 
-// Legacy aliases for backwards compatibility during migration
-/** @deprecated Use AircraftIdentity instead */
-export type ShipIdentity = AircraftIdentity;
-/** @deprecated Use TypeListEntry instead */
-export type ClassListEntry = TypeListEntry;
