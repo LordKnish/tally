@@ -11,39 +11,40 @@ function renderApp(initialRoute = '/') {
   );
 }
 
-// Mock class list data for tests (ship-list.json now contains classes)
-const mockClassList = {
+// Mock aircraft list data for tests (aircraft-list.json contains aircraft types)
+const mockAircraftList = {
   generatedAt: '2026-01-18T00:00:00Z',
   count: 3,
   classes: [
-    { id: 'class:test-class', name: 'Test-class frigate' },
-    { id: 'class:nimitz-class', name: 'Nimitz-class aircraft carrier' },
-    { id: 'class:bismarck-class', name: 'Bismarck-class battleship' },
+    { id: 'type:f-16-fighting-falcon', name: 'F-16 Fighting Falcon' },
+    { id: 'type:f-15-eagle', name: 'F-15 Eagle' },
+    { id: 'type:su-27-flanker', name: 'Su-27 Flanker' },
   ],
 };
 
 // Mock game data for tests
 const mockGameData = {
   date: '2026-01-18',
-  ship: {
+  aircraft: {
     id: 'Q123',
-    name: 'HMS Test Ship',
-    aliases: ['Test Ship', 'TS'],
+    name: 'F-16C Fighting Falcon',
+    typeName: 'F-16 Fighting Falcon',
+    aliases: ['F-16', 'Viper'],
   },
   silhouette: 'data:image/png;base64,test',
   clues: {
     specs: {
-      class: 'Test Class',
-      displacement: '1000 tons',
-      length: '100m',
-      commissioned: '1940',
+      type: 'Multirole Fighter',
+      weight: '19,200 kg',
+      wingspan: '9.96m',
+      firstFlight: '1974',
     },
     context: {
-      nation: 'United Kingdom',
-      conflicts: ['World War II'],
-      status: 'Museum Ship',
+      nation: 'United States',
+      operators: ['USAF', 'Israel', 'Turkey'],
+      status: 'In Production',
     },
-    trivia: 'A test trivia fact',
+    trivia: 'A test trivia fact about the aircraft',
     photo: 'https://example.com/photo.jpg',
   },
 };
@@ -52,10 +53,10 @@ describe('App', () => {
   beforeEach(() => {
     // Mock fetch to return different data based on URL
     vi.spyOn(globalThis, 'fetch').mockImplementation((url) => {
-      if (String(url).includes('ship-list.json')) {
+      if (String(url).includes('aircraft-list.json')) {
         return Promise.resolve({
           ok: true,
-          json: () => Promise.resolve(mockClassList),
+          json: () => Promise.resolve(mockAircraftList),
         } as Response);
       }
       return Promise.resolve({
@@ -74,25 +75,25 @@ describe('App', () => {
     expect(screen.getByText('Loading...')).toBeInTheDocument();
   });
 
-  it('renders the Keel title after loading', async () => {
+  it('renders the Tally title after loading', async () => {
     renderApp();
     await waitFor(() => {
-      expect(screen.getByText('Keel')).toBeInTheDocument();
+      expect(screen.getByText('Tally')).toBeInTheDocument();
     });
   });
 
   it('renders the mode name as tagline after loading', async () => {
     renderApp();
     await waitFor(() => {
-      // Default mode is 'main' which has name 'Daily Keel'
-      expect(screen.getByText('Daily Keel')).toBeInTheDocument();
+      // Default mode is 'main' which has name 'Daily Tally'
+      expect(screen.getByText('Daily Tally')).toBeInTheDocument();
     });
   });
 
   it('renders the silhouette component', async () => {
     renderApp();
     await waitFor(() => {
-      expect(screen.getByAltText('Mystery warship silhouette')).toBeInTheDocument();
+      expect(screen.getByAltText('Mystery aircraft silhouette')).toBeInTheDocument();
     });
   });
 
@@ -103,10 +104,10 @@ describe('App', () => {
     });
   });
 
-  it('renders the class search input', async () => {
+  it('renders the aircraft search input', async () => {
     renderApp();
     await waitFor(() => {
-      expect(screen.getByLabelText('Search for a ship class')).toBeInTheDocument();
+      expect(screen.getByLabelText('Search for an aircraft')).toBeInTheDocument();
     });
   });
 
