@@ -13,9 +13,9 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { sql } from '@vercel/postgres';
 
-type GameModeId = 'main' | 'commercial' | 'ww2' | 'ww1' | 'helicopters' | 'drones';
+type GameModeId = 'main' | 'commercial' | 'ww2' | 'goldenage';
 
-const VALID_MODES: GameModeId[] = ['main', 'commercial', 'ww2', 'ww1', 'helicopters', 'drones'];
+const VALID_MODES: GameModeId[] = ['main', 'commercial', 'ww2', 'goldenage'];
 
 interface GameData {
   date: string;
