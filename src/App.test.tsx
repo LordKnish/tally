@@ -116,7 +116,8 @@ describe('App', () => {
 
     renderApp();
     await waitFor(() => {
-      expect(screen.getByText(/Failed to load game data/)).toBeInTheDocument();
+      expect(screen.getByText(/Network error/)).toBeInTheDocument();
+      expect(screen.getByText(/Today's game may not have been generated yet/)).toBeInTheDocument();
     });
   });
 });
