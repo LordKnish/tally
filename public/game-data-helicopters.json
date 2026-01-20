@@ -1,0 +1,24 @@
+{
+  "date": "2026-01-01",
+  "aircraft": {
+    "id": "placeholder",
+    "name": "Game data loading...",
+    "aliases": []
+  },
+  "silhouette": "",
+  "clues": {
+    "specs": {
+      "class": null,
+      "manufacturer": null,
+      "wingspan": null,
+      "firstFlight": null
+    },
+    "context": {
+      "nation": "Unknown",
+      "conflicts": [],
+      "status": null
+    },
+    "trivia": null,
+    "photo": ""
+  }
+}
