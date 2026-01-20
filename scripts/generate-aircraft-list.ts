@@ -57,6 +57,72 @@ interface AircraftListOutput {
   aircraft: AircraftEntry[];
 }
 
+interface SparqlResponse<T> {
+  results: {
+    bindings: T[];
+  };
+}
+
+// ============================================================================
+// Utility Functions
+// ============================================================================
+
+/**
+ * Delay execution for specified milliseconds
+ */
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+// ============================================================================
+// SPARQL Execution
+// ============================================================================
+
+const MAX_RETRIES = 3;
+const RETRY_DELAY_MS = 5000;
+
+/**
+ * Execute a SPARQL query against Wikidata with retry logic
+ * @param query The SPARQL query string
+ * @returns Array of result bindings
+ */
+async function executeSparql<T>(query: string): Promise<T[]> {
+  const url = new URL(SPARQL_ENDPOINT);
+  url.searchParams.set('query', query);
+  url.searchParams.set('format', 'json');
+
+  let lastError: Error | null = null;
+
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      const response = await fetch(url.toString(), {
+        headers: {
+          Accept: 'application/sparql-results+json',
+          'User-Agent': USER_AGENT,
+        },
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`SPARQL query failed (${response.status}): ${errorText.slice(0, 200)}`);
+      }
+
+      const data = (await response.json()) as SparqlResponse<T>;
+      return data.results.bindings;
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error(String(error));
+      console.warn(`  Attempt ${attempt}/${MAX_RETRIES} failed: ${lastError.message}`);
+
+      if (attempt < MAX_RETRIES) {
+        console.log(`  Retrying in ${RETRY_DELAY_MS / 1000}s...`);
+        await delay(RETRY_DELAY_MS);
+      }
+    }
+  }
+
+  throw lastError || new Error('SPARQL query failed after all retries');
+}
+
 // ============================================================================
 // Main Entry Point
 // ============================================================================
