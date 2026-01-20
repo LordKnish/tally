@@ -156,7 +156,7 @@ function App() {
 
       // Reconstruct guess history for display
       const reconstructedGuesses: GuessEntry[] = savedResult.guessResults.map((r, i) => ({
-        shipName: r === 'correct'
+        aircraftName: r === 'correct'
           ? (gameData.aircraft.typeName || gameData.aircraft.name)
           : `Guess ${i + 1}`,
         correct: r === 'correct',
@@ -205,7 +205,7 @@ function App() {
 
       // Add to guess history
       const newGuess: GuessEntry = {
-        shipName: aircraft.name,
+        aircraftName: aircraft.name,
         correct: isCorrect,
       };
       setGuesses((prev) => [...prev, newGuess]);

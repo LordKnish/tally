@@ -4,8 +4,8 @@ import './GuessHistory.css';
  * Single guess entry in the history
  */
 export interface GuessEntry {
-  /** Name of the guessed class (e.g., "Fletcher-class destroyer") */
-  shipName: string;
+  /** Name of the guessed aircraft (e.g., "F-16 Fighting Falcon") */
+  aircraftName: string;
   /** Whether the guess was correct */
   correct: boolean;
 }
@@ -17,7 +17,7 @@ export interface GuessHistoryProps {
 
 /**
  * Displays the history of previous guesses.
- * Shows class names with green/gray styling for correct/wrong.
+ * Shows aircraft names with green/gray styling for correct/wrong.
  * New entries animate in with cardReveal animation.
  */
 export function GuessHistory({ guesses }: GuessHistoryProps) {
@@ -31,7 +31,7 @@ export function GuessHistory({ guesses }: GuessHistoryProps) {
       <ul className="guess-history__list">
         {guesses.map((guess, index) => (
           <li
-            key={`${guess.shipName}-${index}`}
+            key={`${guess.aircraftName}-${index}`}
             className={`guess-history__item ${
               guess.correct
                 ? 'guess-history__item--correct'
@@ -43,7 +43,7 @@ export function GuessHistory({ guesses }: GuessHistoryProps) {
             <span className="guess-history__icon" aria-hidden="true">
               {guess.correct ? '\u2713' : '\u2717'}
             </span>
-            <span className="guess-history__ship-name">{guess.shipName}</span>
+            <span className="guess-history__aircraft-name">{guess.aircraftName}</span>
           </li>
         ))}
       </ul>

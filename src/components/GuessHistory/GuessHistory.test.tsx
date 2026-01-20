@@ -9,26 +9,26 @@ describe('GuessHistory', () => {
   });
 
   it('renders the title when there are guesses', () => {
-    const guesses: GuessEntry[] = [{ shipName: 'USS Enterprise', correct: false }];
+    const guesses: GuessEntry[] = [{ aircraftName: 'F-16 Fighting Falcon', correct: false }];
     render(<GuessHistory guesses={guesses} />);
     expect(screen.getByText('Your Guesses')).toBeInTheDocument();
   });
 
   it('renders all guesses in the list', () => {
     const guesses: GuessEntry[] = [
-      { shipName: 'USS Enterprise', correct: false },
-      { shipName: 'HMS Victory', correct: false },
-      { shipName: 'Bismarck', correct: true },
+      { aircraftName: 'F-16 Fighting Falcon', correct: false },
+      { aircraftName: 'F-15 Eagle', correct: false },
+      { aircraftName: 'Su-27 Flanker', correct: true },
     ];
     render(<GuessHistory guesses={guesses} />);
 
-    expect(screen.getByText('USS Enterprise')).toBeInTheDocument();
-    expect(screen.getByText('HMS Victory')).toBeInTheDocument();
-    expect(screen.getByText('Bismarck')).toBeInTheDocument();
+    expect(screen.getByText('F-16 Fighting Falcon')).toBeInTheDocument();
+    expect(screen.getByText('F-15 Eagle')).toBeInTheDocument();
+    expect(screen.getByText('Su-27 Flanker')).toBeInTheDocument();
   });
 
   it('applies correct styling class for correct guesses', () => {
-    const guesses: GuessEntry[] = [{ shipName: 'Bismarck', correct: true }];
+    const guesses: GuessEntry[] = [{ aircraftName: 'Su-27 Flanker', correct: true }];
     render(<GuessHistory guesses={guesses} />);
 
     const item = screen.getByRole('listitem');
@@ -36,7 +36,7 @@ describe('GuessHistory', () => {
   });
 
   it('applies wrong styling class for incorrect guesses', () => {
-    const guesses: GuessEntry[] = [{ shipName: 'USS Enterprise', correct: false }];
+    const guesses: GuessEntry[] = [{ aircraftName: 'F-16 Fighting Falcon', correct: false }];
     render(<GuessHistory guesses={guesses} />);
 
     const item = screen.getByRole('listitem');
@@ -44,7 +44,7 @@ describe('GuessHistory', () => {
   });
 
   it('displays checkmark icon for correct guesses', () => {
-    const guesses: GuessEntry[] = [{ shipName: 'Bismarck', correct: true }];
+    const guesses: GuessEntry[] = [{ aircraftName: 'Su-27 Flanker', correct: true }];
     render(<GuessHistory guesses={guesses} />);
 
     // Unicode checkmark
@@ -52,7 +52,7 @@ describe('GuessHistory', () => {
   });
 
   it('displays X icon for incorrect guesses', () => {
-    const guesses: GuessEntry[] = [{ shipName: 'USS Enterprise', correct: false }];
+    const guesses: GuessEntry[] = [{ aircraftName: 'F-16 Fighting Falcon', correct: false }];
     render(<GuessHistory guesses={guesses} />);
 
     // Unicode X
@@ -60,7 +60,7 @@ describe('GuessHistory', () => {
   });
 
   it('has correct ARIA attributes', () => {
-    const guesses: GuessEntry[] = [{ shipName: 'USS Enterprise', correct: false }];
+    const guesses: GuessEntry[] = [{ aircraftName: 'F-16 Fighting Falcon', correct: false }];
     render(<GuessHistory guesses={guesses} />);
 
     expect(screen.getByRole('list', { name: 'Guess history' })).toBeInTheDocument();
@@ -69,9 +69,9 @@ describe('GuessHistory', () => {
 
   it('applies animation delay based on index', () => {
     const guesses: GuessEntry[] = [
-      { shipName: 'Ship 1', correct: false },
-      { shipName: 'Ship 2', correct: false },
-      { shipName: 'Ship 3', correct: true },
+      { aircraftName: 'Aircraft 1', correct: false },
+      { aircraftName: 'Aircraft 2', correct: false },
+      { aircraftName: 'Aircraft 3', correct: true },
     ];
     render(<GuessHistory guesses={guesses} />);
 

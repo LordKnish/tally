@@ -58,7 +58,7 @@
 }
 
 /* ==========================================================================
-   Icon & Ship Name
+   Icon & Aircraft Name
    ========================================================================== */
 
 .guess-history__icon {
@@ -72,7 +72,7 @@
   flex-shrink: 0;
 }
 
-.guess-history__ship-name {
+.guess-history__aircraft-name {
   flex: 1;
   white-space: nowrap;
   overflow: hidden;
