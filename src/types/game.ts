@@ -5,29 +5,29 @@
 
 /**
  * Specs clue shown on Turn 2.
- * Example: "Type: Multirole Fighter | Wingspan: 9.96m | Weight: 19,200 kg | First Flight: 1974"
+ * Example: "Manufacturer: Lockheed Martin | Wingspan: 9.96m | First Flight: 1974"
  */
 export interface SpecsClue {
-  /** Aircraft type (e.g., "Multirole Fighter") */
-  type: string | null;
-  /** Maximum takeoff weight (e.g., "19,200 kg") */
-  weight: string | null;
-  /** Wingspan (e.g., "9.96m") */
+  /** Aircraft class/role (e.g., "fighter aircraft", "bomber") - from Wikidata P31 */
+  class: string | null;
+  /** Manufacturer (e.g., "Lockheed Martin") - from Wikidata P176 */
+  manufacturer: string | null;
+  /** Wingspan (e.g., "9.96m") - from Wikidata P2050 */
   wingspan: string | null;
-  /** First flight year (e.g., "1974") */
+  /** First flight year (e.g., "1974") - from Wikidata P606 */
   firstFlight: string | null;
 }
 
 /**
  * Context clue shown on Turn 3.
- * Example: "Nation: USA | Operators: USAF, Israel, Turkey | Status: In Production"
+ * Example: "Nation: USA | Conflicts: Gulf War, Afghanistan | Status: Active"
  */
 export interface ContextClue {
-  /** Country of origin (e.g., "United States") */
+  /** Country of origin (e.g., "United States") - from Wikidata P495 */
   nation: string;
-  /** List of operators/air forces */
-  operators: string[];
-  /** Current status (e.g., "In Production", "Retired", "Museum") */
+  /** Notable conflicts the aircraft participated in - from Wikidata P607 */
+  conflicts: string[];
+  /** Current status (e.g., "In service", "Retired 2005") - from Wikidata P1308/P730 */
   status: string | null;
 }
 
