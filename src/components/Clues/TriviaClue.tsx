@@ -11,7 +11,7 @@ export interface TriviaClueProps {
 }
 
 /**
- * TriviaClue displays an interesting fact about the ship (Turn 4).
+ * TriviaClue displays an interesting fact about the aircraft (Turn 4).
  * Styled as a quote for visual distinction.
  */
 export function TriviaClue({
@@ -31,7 +31,7 @@ export function TriviaClue({
           <p className="trivia-clue__text">{text}</p>
         </blockquote>
       ) : (
-        <p className="trivia-clue__none">No trivia available for this ship.</p>
+        <p className="trivia-clue__none">No trivia available for this aircraft.</p>
       )}
     </ClueCard>
   );
