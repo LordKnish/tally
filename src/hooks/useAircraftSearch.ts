@@ -8,6 +8,7 @@ import Fuse from 'fuse.js';
 export interface AircraftListEntry {
   id: string;
   name: string;
+  aliases?: string[];
 }
 
 /**
@@ -16,7 +17,7 @@ export interface AircraftListEntry {
 interface AircraftListData {
   generatedAt: string;
   count: number;
-  classes: AircraftListEntry[];
+  aircraft: AircraftListEntry[];
 }
 
 /**
@@ -41,9 +42,10 @@ export interface UseAircraftSearchReturn {
  * - threshold: 0.3 allows for typos while staying relevant
  * - ignoreLocation: true matches anywhere in the name
  * - minMatchCharLength: 2 requires at least 2 chars before matching
+ * - keys: search both name and aliases
  */
 const FUSE_OPTIONS = {
-  keys: ['name'],
+  keys: ['name', 'aliases'],
   threshold: 0.3,
   includeScore: true,
   ignoreLocation: true,
@@ -79,7 +81,7 @@ export function useAircraftSearch(): UseAircraftSearchReturn {
           throw new Error(`Failed to load aircraft list: ${response.status}`);
         }
         const data: AircraftListData = await response.json();
-        fuseRef.current = new Fuse(data.classes, FUSE_OPTIONS);
+        fuseRef.current = new Fuse(data.aircraft, FUSE_OPTIONS);
       } catch (err) {
         setError(err instanceof Error ? err : new Error('Unknown error loading aircraft list'));
       } finally {

@@ -2,16 +2,16 @@ import { renderHook, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { useAircraftSearch } from './useAircraftSearch';
 
-// Mock aircraft list data (aircraft-list.json contains aircraft types)
+// Mock aircraft list data (aircraft-list.json contains aircraft from Wikidata)
 const mockAircraftList = {
   generatedAt: '2026-01-18T00:00:00Z',
   count: 5,
-  classes: [
-    { id: 'type:f-16-fighting-falcon', name: 'F-16 Fighting Falcon' },
-    { id: 'type:f-15-eagle', name: 'F-15 Eagle' },
-    { id: 'type:su-27-flanker', name: 'Su-27 Flanker' },
-    { id: 'type:mig-29-fulcrum', name: 'MiG-29 Fulcrum' },
-    { id: 'type:eurofighter-typhoon', name: 'Eurofighter Typhoon' },
+  aircraft: [
+    { id: 'Q188766', name: 'F-16 Fighting Falcon', aliases: ['F-16', 'Viper', 'Fighting Falcon'] },
+    { id: 'Q187895', name: 'F-15 Eagle', aliases: ['F-15', 'Eagle'] },
+    { id: 'Q1362', name: 'Su-27 Flanker', aliases: ['Su-27', 'Flanker'] },
+    { id: 'Q178057', name: 'MiG-29 Fulcrum', aliases: ['MiG-29', 'Fulcrum'] },
+    { id: 'Q183222', name: 'Eurofighter Typhoon', aliases: ['Typhoon', 'EF2000'] },
   ],
 };
 
@@ -123,17 +123,17 @@ describe('useAircraftSearch', () => {
         Promise.resolve({
           generatedAt: '2026-01-18T00:00:00Z',
           count: 10,
-          classes: [
-            { id: 'type:f-1', name: 'F-1 Fighter' },
-            { id: 'type:f-2', name: 'F-2 Fighter' },
-            { id: 'type:f-3', name: 'F-3 Fighter' },
-            { id: 'type:f-4', name: 'F-4 Fighter' },
-            { id: 'type:f-5', name: 'F-5 Fighter' },
-            { id: 'type:f-6', name: 'F-6 Fighter' },
-            { id: 'type:f-7', name: 'F-7 Fighter' },
-            { id: 'type:f-8', name: 'F-8 Fighter' },
-            { id: 'type:f-9', name: 'F-9 Fighter' },
-            { id: 'type:f-10', name: 'F-10 Fighter' },
+          aircraft: [
+            { id: 'Q1', name: 'F-1 Fighter', aliases: ['F-1'] },
+            { id: 'Q2', name: 'F-2 Fighter', aliases: ['F-2'] },
+            { id: 'Q3', name: 'F-3 Fighter', aliases: ['F-3'] },
+            { id: 'Q4', name: 'F-4 Fighter', aliases: ['F-4'] },
+            { id: 'Q5', name: 'F-5 Fighter', aliases: ['F-5'] },
+            { id: 'Q6', name: 'F-6 Fighter', aliases: ['F-6'] },
+            { id: 'Q7', name: 'F-7 Fighter', aliases: ['F-7'] },
+            { id: 'Q8', name: 'F-8 Fighter', aliases: ['F-8'] },
+            { id: 'Q9', name: 'F-9 Fighter', aliases: ['F-9'] },
+            { id: 'Q10', name: 'F-10 Fighter', aliases: ['F-10'] },
           ],
         }),
     } as Response);
@@ -146,5 +146,18 @@ describe('useAircraftSearch', () => {
 
     const results = result.current.search('Fighter');
     expect(results.length).toBeLessThanOrEqual(8);
+  });
+
+  it('search matches on aliases', async () => {
+    const { result } = renderHook(() => useAircraftSearch());
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    // Should find F-16 when searching for its alias "Viper"
+    const results = result.current.search('Viper');
+    expect(results.length).toBeGreaterThan(0);
+    expect(results[0]?.name).toContain('F-16');
   });
 });
