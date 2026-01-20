@@ -34,15 +34,15 @@ const mockGameData = {
   silhouette: 'data:image/png;base64,test',
   clues: {
     specs: {
-      type: 'Multirole Fighter',
-      weight: '19,200 kg',
+      class: 'multirole combat aircraft',
+      manufacturer: 'General Dynamics',
       wingspan: '9.96m',
       firstFlight: '1974',
     },
     context: {
       nation: 'United States',
-      operators: ['USAF', 'Israel', 'Turkey'],
-      status: 'In Production',
+      conflicts: ['Gulf War', 'Iraq War', 'War in Afghanistan'],
+      status: 'In service',
     },
     trivia: 'A test trivia fact about the aircraft',
     photo: 'https://example.com/photo.jpg',
