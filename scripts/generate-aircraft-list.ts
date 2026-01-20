@@ -438,18 +438,65 @@ function printStats(stats: TypeStats[], totalUnique: number): void {
 }
 
 // ============================================================================
+// JSON Output
+// ============================================================================
+
+/**
+ * Write aircraft list to JSON file
+ * @param aircraft Array of aircraft entries
+ */
+function writeOutput(aircraft: AircraftEntry[]): void {
+  const output: AircraftListOutput = {
+    generatedAt: new Date().toISOString(),
+    count: aircraft.length,
+    aircraft,
+  };
+
+  // Pretty-print with 2-space indentation
+  const json = JSON.stringify(output, null, 2);
+
+  // Ensure output directory exists
+  const outputDir = path.dirname(OUTPUT_PATH);
+  if (!fs.existsSync(outputDir)) {
+    fs.mkdirSync(outputDir, { recursive: true });
+  }
+
+  fs.writeFileSync(OUTPUT_PATH, json, 'utf-8');
+  console.log(`\nOutput written to: ${OUTPUT_PATH}`);
+  console.log(`File size: ${(json.length / 1024).toFixed(2)} KB`);
+}
+
+// ============================================================================
 // Main Entry Point
 // ============================================================================
 
 async function main(): Promise<void> {
+  const startTime = Date.now();
+
   console.log('Aircraft List Generator');
   console.log('=======================');
   console.log(`Output: ${OUTPUT_PATH}`);
   console.log(`Aircraft types: ${Object.keys(AIRCRAFT_TYPE_QIDS).length}`);
   console.log('');
 
-  // TODO: Implement in subsequent tasks
-  console.log('Script skeleton created. Implementation pending.');
+  // Fetch all aircraft
+  const { aircraft, stats } = await fetchAllAircraft();
+
+  // Print statistics
+  printStats(stats, aircraft.length);
+
+  // Write output
+  writeOutput(aircraft);
+
+  // Summary
+  const elapsedSeconds = ((Date.now() - startTime) / 1000).toFixed(1);
+  console.log(`\nCompleted in ${elapsedSeconds}s`);
+  console.log(`Aircraft count: ${aircraft.length}`);
+
+  // Verify minimum count
+  if (aircraft.length < 200) {
+    console.warn(`\nWARNING: Only ${aircraft.length} aircraft found. Expected 200+`);
+  }
 }
 
 main().catch((error) => {
