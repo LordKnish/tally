@@ -3,16 +3,16 @@ import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { AircraftSearch } from './AircraftSearch';
 
-// Mock aircraft list data (aircraft-list.json contains aircraft types)
+// Mock aircraft list data (aircraft-list.json contains aircraft from Wikidata)
 const mockAircraftList = {
   generatedAt: '2026-01-18T00:00:00Z',
   count: 5,
-  classes: [
-    { id: 'type:f-16-fighting-falcon', name: 'F-16 Fighting Falcon' },
-    { id: 'type:f-15-eagle', name: 'F-15 Eagle' },
-    { id: 'type:su-27-flanker', name: 'Su-27 Flanker' },
-    { id: 'type:mig-29-fulcrum', name: 'MiG-29 Fulcrum' },
-    { id: 'type:eurofighter-typhoon', name: 'Eurofighter Typhoon' },
+  aircraft: [
+    { id: 'Q188766', name: 'F-16 Fighting Falcon', aliases: ['F-16', 'Viper', 'Fighting Falcon'] },
+    { id: 'Q187895', name: 'F-15 Eagle', aliases: ['F-15', 'Eagle'] },
+    { id: 'Q1362', name: 'Su-27 Flanker', aliases: ['Su-27', 'Flanker'] },
+    { id: 'Q178057', name: 'MiG-29 Fulcrum', aliases: ['MiG-29', 'Fulcrum'] },
+    { id: 'Q183222', name: 'Eurofighter Typhoon', aliases: ['Typhoon', 'EF2000'] },
   ],
 };
 
@@ -92,8 +92,9 @@ describe('AircraftSearch', () => {
     await user.click(screen.getByText('F-16 Fighting Falcon'));
 
     expect(onSelect).toHaveBeenCalledWith({
-      id: 'type:f-16-fighting-falcon',
+      id: 'Q188766',
       name: 'F-16 Fighting Falcon',
+      aliases: ['F-16', 'Viper', 'Fighting Falcon'],
     });
   });
 
