@@ -15,9 +15,9 @@
 - Update localStorage keys from `keel-*` to `tally-*`
 - Update aria-labels for accessibility
 
-### Phase 2: Aircraft Database Population Script
+### Phase 2: Aircraft Database Population Script [COMPLETED]
 **Objective:** Create comprehensive scripts to populate the searchable aircraft database from Wikidata.
-**Research:** Yes - Need to determine optimal SPARQL queries for complete aircraft coverage
+**Status:** COMPLETED (10 commits, 3,848 aircraft generated)
 **Scope:**
 - Create script to fetch all relevant aircraft from Wikidata by category
 - Generate aircraft list covering all 6 game modes

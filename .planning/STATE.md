@@ -4,22 +4,24 @@
 **v1.0** - Complete Aircraft Guessing Game
 
 ## Current Phase
-**Phase 2** - Aircraft Database Population Script
+**Phase 3** - Game Mode Validation & Fixes
 
 ## Phase Status
 - [x] Phase 1: Legacy Nomenclature Cleanup (COMPLETED - 16 commits)
-- [ ] Phase 2: Aircraft Database Population Script
+- [x] Phase 2: Aircraft Database Population Script (COMPLETED - 10 commits)
 - [ ] Phase 3: Game Mode Validation & Fixes
 - [ ] Phase 4: Aviation-Specific Clue Enhancement
 - [ ] Phase 5: Silhouette Generation Improvements
 - [ ] Phase 6: Final Polish & Testing
 
 ## Context
-Phase 1 complete. All ship/Keel terminology has been replaced with aircraft/Tally throughout the codebase. 22 files updated, 58 tests passing.
+Phase 2 complete. Generated 3,848 aircraft from Wikidata with aliases. Search now works on both names and aliases. Ship data fully replaced.
 
 ## Key Decisions
 - localStorage migration preserves user data from old `keel-daily-completion` key
 - Removed deprecated `ShipIdentity` type alias (no backwards compatibility needed)
+- Aircraft list uses new format: `{ aircraft: [{ id, name, aliases }] }`
+- Fuse.js searches both `name` and `aliases` fields
 
 ## Blockers
 - None
