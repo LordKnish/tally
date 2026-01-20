@@ -11,12 +11,12 @@ import { SpecsClue } from './components/Clues/SpecsClue';
 import { ContextClue } from './components/Clues/ContextClue';
 import { TriviaClue } from './components/Clues/TriviaClue';
 import { PhotoReveal } from './components/Clues/PhotoReveal';
-import { ShipSearch } from './components/ShipSearch/ShipSearch';
+import { AircraftSearch } from './components/AircraftSearch/AircraftSearch';
 import { GuessHistory, type GuessEntry } from './components/GuessHistory/GuessHistory';
 import { WinModal } from './components/WinModal/WinModal';
 import { HelpModal } from './components/HelpModal/HelpModal';
 import { ModeMenu } from './components/ModeMenu/ModeMenu';
-import type { ShipListEntry } from './hooks/useShipSearch';
+import type { AircraftListEntry } from './hooks/useAircraftSearch';
 import './styles/animations.css';
 import './App.css';
 
@@ -188,7 +188,7 @@ function App() {
   }, [isRevealing, winRevealStep]);
 
   const handleAircraftSelect = useCallback(
-    (aircraft: ShipListEntry) => {
+    (aircraft: AircraftListEntry) => {
       if (!gameData || isGameComplete) return;
 
       // Check if the guess is correct - match by type name, aircraft name, or aliases
@@ -386,7 +386,7 @@ function App() {
               )}
             </div>
           ) : (
-            <ShipSearch
+            <AircraftSearch
               onSelect={handleAircraftSelect}
               disabled={isGameComplete}
               excludeIds={guessedIds}
