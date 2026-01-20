@@ -27,27 +27,27 @@
 - Ensure comprehensive coverage (military, commercial, historical, rotorcraft, UAVs)
 
 ### Phase 3: Game Mode Validation & Fixes [COMPLETED]
-**Objective:** Ensure all 6 game modes work correctly with proper aircraft selection and clue generation.
+**Objective:** Ensure game modes work correctly with proper aircraft selection and clue generation.
 **Status:** COMPLETED (5 commits, all modes validated)
 **Scope:**
 - Test and fix Daily Tally (main) mode
 - Test and fix Commercial mode
 - Test and fix WW2 mode
-- Test and fix WW1 mode
-- Test and fix Helicopters mode
-- Test and fix Drones mode
+- Test and fix Golden Age mode (formerly WW1)
 - Validate aircraft selection criteria per mode
 - Ensure no cross-mode contamination
 
 ### Phase 4: Aviation-Specific Clue Enhancement [COMPLETED]
 **Objective:** Update clue content to be aviation-specific and improve clue quality.
-**Status:** COMPLETED (7 commits)
+**Status:** COMPLETED (9 commits)
 **Scope:**
 - Aligned frontend/backend clue type definitions
 - SpecsClue displays: Role, Manufacturer, Wingspan, First Flight
 - ContextClue displays: Nation, Notable Conflicts, Status
 - Added 30+ aviation-specific trivia extraction keywords
-- Expanded Commercial mode aircraft types
+- Fixed Commercial mode with subclass path (6→157 aircraft)
+- Consolidated to 4 modes (removed Helicopters/Drones, WW1→Golden Age)
+- All modes now have 100+ aircraft
 - Updated tests for new clue structure
 
 ### Phase 5: Silhouette Generation Improvements

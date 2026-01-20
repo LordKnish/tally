@@ -15,7 +15,7 @@
 - [ ] Phase 6: Final Polish & Testing
 
 ## Context
-Phase 4 complete. Frontend and backend clue structures now aligned. SpecsClue displays Role, Manufacturer, Wingspan, First Flight. ContextClue displays Nation, Conflicts, Status. Aviation-specific trivia keywords added. Commercial mode expanded but still limited by Wikidata classification.
+Phase 4 complete. Frontend and backend clue structures now aligned. SpecsClue displays Role, Manufacturer, Wingspan, First Flight. ContextClue displays Nation, Conflicts, Status. Aviation-specific trivia keywords added. All modes now have 100+ aircraft.
 
 ## Key Decisions
 - localStorage migration preserves user data from old `keel-daily-completion` key
@@ -24,9 +24,13 @@ Phase 4 complete. Frontend and backend clue structures now aligned. SpecsClue di
 - Fuse.js searches both `name` and `aliases` fields
 - Placeholder data detection shows user-friendly error state
 - Clue structure: `class` for aircraft role, `conflicts` for military operations
+- Commercial mode uses subclass path (P279+) for broader coverage
+- Consolidated to 4 modes: Daily Tally, Commercial, WW2, Golden Age
+- Removed Helicopters/Drones (insufficient Wikidata coverage)
+- WW1 renamed to "Golden Age" (pre-1940) for broader early aviation coverage
 
 ## Known Issues
-- Commercial mode has only 6 eligible aircraft (Wikidata classification limitation)
+- None
 
 ## Blockers
 - None

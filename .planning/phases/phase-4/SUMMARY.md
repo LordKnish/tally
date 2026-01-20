@@ -65,13 +65,16 @@ All 8 tasks completed successfully. Frontend and backend clue structures are now
 
 ## Known Issues
 
-1. **Commercial mode limited coverage**: Despite adding more Q-IDs and relaxing the year filter, Commercial mode only has ~6 eligible aircraft. This is due to Wikidata's classification structure where commercial aircraft are often typed with specific model Q-IDs (e.g., "Boeing 737-400") rather than generic types like "airliner". A future enhancement could query using subclass hierarchies, but this causes SPARQL timeout issues.
+None - all issues resolved.
+
+### Resolved: Commercial Mode Coverage (commit `9201df1`)
+Commercial mode now has 157 eligible aircraft (up from 6) by using Wikidata subclass path (P279+) to find aircraft that are instances of types that are subclasses of "airliner". This properly captures Boeing 747-400, Airbus A320, etc.
 
 ## Deferred/Future Work
 
-- Consider alternative query strategies for Commercial mode
 - Could add more trivia keywords based on actual game play feedback
 - The `class` field could potentially reveal too much for some aircraft (e.g., "fighter aircraft" for F-16) - may need filtering in future
+- Helicopters and Drones modes can be re-added when Wikidata has more coverage
 
 ## Commits
 
@@ -84,3 +87,5 @@ All 8 tasks completed successfully. Frontend and backend clue structures are now
 | 3c6de85 | feat | Expand Commercial mode aircraft coverage |
 | fb5e996 | feat | Add aircraft role to specs clue |
 | 4383ebf | test | Update tests for new clue structure |
+| 9201df1 | fix | Use subclass path for Commercial mode queries (6→157 aircraft) |
+| aed1323 | feat | Consolidate modes: remove Helicopters/Drones, WW1→Golden Age |
