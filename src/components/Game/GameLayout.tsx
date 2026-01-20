@@ -48,7 +48,7 @@ export function GameLayout({
       {header && <header className="game-layout__header">{header}</header>}
 
       <main className="game-layout__main">
-        <section className="game-layout__silhouette" aria-label="Ship silhouette">
+        <section className="game-layout__silhouette" aria-label="Aircraft silhouette">
           {silhouette}
         </section>
 
