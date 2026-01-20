@@ -8,7 +8,7 @@ export interface SubmitButtonProps {
 }
 
 /**
- * Submit button for confirming a ship guess.
+ * Submit button for confirming an aircraft guess.
  * Uses shadcn Button with large touch target for accessibility.
  */
 export function SubmitButton({ onClick, disabled = false }: SubmitButtonProps) {
