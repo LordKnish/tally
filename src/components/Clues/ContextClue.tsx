@@ -96,16 +96,16 @@ export interface ContextClueProps {
 
 /**
  * ContextClue displays historical context (Turn 3).
- * Shows: Nation, Operators, Status.
+ * Shows: Nation, Conflicts, Status.
  */
 export function ContextClue({
   data,
   revealed,
   className = '',
 }: ContextClueProps) {
-  const operatorsText =
-    data.operators.length > 0
-      ? data.operators.join(', ')
+  const conflictsText =
+    data.conflicts.length > 0
+      ? data.conflicts.join(', ')
       : null;
 
   const flag = getFlagForNation(data.nation);
@@ -127,9 +127,9 @@ export function ContextClue({
         </div>
 
         <div className="context-clue__item">
-          <dt className="context-clue__label">Operators</dt>
+          <dt className="context-clue__label">Notable Conflicts</dt>
           <dd className="context-clue__value">
-            {operatorsText ?? (
+            {conflictsText ?? (
               <span className="context-clue__none">None recorded</span>
             )}
           </dd>
