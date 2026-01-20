@@ -338,6 +338,106 @@ function resultToEntry(result: AircraftQueryResult): AircraftEntry {
 }
 
 // ============================================================================
+// Deduplication and Aggregation
+// ============================================================================
+
+/**
+ * Statistics for each aircraft type
+ */
+interface TypeStats {
+  qid: string;
+  name: string;
+  count: number;
+}
+
+/**
+ * Merge two aircraft entries (combine aliases)
+ */
+function mergeEntries(existing: AircraftEntry, incoming: AircraftEntry): AircraftEntry {
+  const allAliases = new Set([...existing.aliases, ...incoming.aliases]);
+  return {
+    id: existing.id,
+    name: existing.name,
+    aliases: Array.from(allAliases).sort((a, b) => a.localeCompare(b)),
+  };
+}
+
+/**
+ * Fetch all aircraft from all types and aggregate/deduplicate
+ * @returns Object containing deduplicated aircraft list and statistics
+ */
+async function fetchAllAircraft(): Promise<{
+  aircraft: AircraftEntry[];
+  stats: TypeStats[];
+}> {
+  const aircraftMap = new Map<string, AircraftEntry>();
+  const stats: TypeStats[] = [];
+
+  const typeEntries = Object.entries(AIRCRAFT_TYPE_QIDS);
+
+  for (let i = 0; i < typeEntries.length; i++) {
+    const [qid, name] = typeEntries[i];
+
+    // Rate limiting between different type queries
+    if (i > 0) {
+      await delay(QUERY_DELAY_MS);
+    }
+
+    try {
+      const results = await fetchAircraftByType(qid, name);
+
+      let typeCount = 0;
+      for (const result of results) {
+        const entry = resultToEntry(result);
+
+        // Check for existing entry
+        const existing = aircraftMap.get(entry.id);
+        if (existing) {
+          // Merge aliases from duplicate
+          aircraftMap.set(entry.id, mergeEntries(existing, entry));
+        } else {
+          aircraftMap.set(entry.id, entry);
+          typeCount++;
+        }
+      }
+
+      stats.push({ qid, name, count: results.length });
+      console.log(`  New unique aircraft: ${typeCount}`);
+    } catch (error) {
+      console.error(`  Failed to fetch ${name}: ${error}`);
+      stats.push({ qid, name, count: 0 });
+    }
+  }
+
+  // Convert map to sorted array
+  const aircraft = Array.from(aircraftMap.values()).sort((a, b) =>
+    a.name.localeCompare(b.name)
+  );
+
+  return { aircraft, stats };
+}
+
+/**
+ * Print statistics summary
+ */
+function printStats(stats: TypeStats[], totalUnique: number): void {
+  console.log('\n========================================');
+  console.log('Statistics Summary');
+  console.log('========================================');
+
+  let totalFetched = 0;
+  for (const stat of stats) {
+    console.log(`  ${stat.name}: ${stat.count}`);
+    totalFetched += stat.count;
+  }
+
+  console.log('----------------------------------------');
+  console.log(`  Total fetched (with duplicates): ${totalFetched}`);
+  console.log(`  Unique aircraft: ${totalUnique}`);
+  console.log(`  Duplicates merged: ${totalFetched - totalUnique}`);
+}
+
+// ============================================================================
 // Main Entry Point
 // ============================================================================
 
