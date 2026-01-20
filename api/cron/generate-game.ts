@@ -25,13 +25,13 @@ interface SpecsClue {
   class: string | null;
   manufacturer: string | null;
   wingspan: string | null;
-  firstFlight: string | null;
+  capacity: string | null;
 }
 
 interface ContextClue {
   nation: string;
+  firstFlight: string | null;
   conflicts: string[];
-  status: string | null;
 }
 
 interface GameClues {
@@ -68,11 +68,11 @@ interface WikidataAircraftResult {
   manufacturerCountryLabel?: { value: string };
   wingspan?: { value: string };
   length?: { value: string };
+  crew?: { value: string };
+  passengerCapacity?: { value: string };
   firstFlight?: { value: string };
   introduced?: { value: string };
   retired?: { value: string };
-  status?: { value: string };
-  statusLabel?: { value: string };
   conflict?: { value: string };
   conflictLabel?: { value: string };
   article?: { value: string };
@@ -86,11 +86,10 @@ interface SelectedAircraft {
   country: string | null;
   wingspan: string | null;
   length: string | null;
+  capacity: string | null;
   manufacturer: string | null;
   firstFlight: string | null;
   introduced: string | null;
-  retired: string | null;
-  status: string | null;
   conflicts: string[];
   wikipediaTitle: string | null;
 }
@@ -249,10 +248,10 @@ async function saveGameData(gameData: GameData, mode: GameModeId = 'main'): Prom
         clues_specs_class,
         clues_specs_manufacturer,
         clues_specs_wingspan,
-        clues_specs_first_flight,
+        clues_specs_capacity,
         clues_context_nation,
+        clues_context_first_flight,
         clues_context_conflicts,
-        clues_context_status,
         clues_trivia,
         clues_photo
       ) VALUES (
@@ -265,10 +264,10 @@ async function saveGameData(gameData: GameData, mode: GameModeId = 'main'): Prom
         ${clues.specs.class},
         ${clues.specs.manufacturer},
         ${clues.specs.wingspan},
-        ${clues.specs.firstFlight},
+        ${clues.specs.capacity},
         ${clues.context.nation},
+        ${clues.context.firstFlight},
         ${conflictsArray}::text[],
-        ${clues.context.status},
         ${clues.trivia},
         ${clues.photo}
       )
@@ -280,10 +279,10 @@ async function saveGameData(gameData: GameData, mode: GameModeId = 'main'): Prom
         clues_specs_class = EXCLUDED.clues_specs_class,
         clues_specs_manufacturer = EXCLUDED.clues_specs_manufacturer,
         clues_specs_wingspan = EXCLUDED.clues_specs_wingspan,
-        clues_specs_first_flight = EXCLUDED.clues_specs_first_flight,
+        clues_specs_capacity = EXCLUDED.clues_specs_capacity,
         clues_context_nation = EXCLUDED.clues_context_nation,
+        clues_context_first_flight = EXCLUDED.clues_context_first_flight,
         clues_context_conflicts = EXCLUDED.clues_context_conflicts,
-        clues_context_status = EXCLUDED.clues_context_status,
         clues_trivia = EXCLUDED.clues_trivia,
         clues_photo = EXCLUDED.clues_photo,
         updated_at = CURRENT_TIMESTAMP
@@ -381,9 +380,9 @@ SELECT DISTINCT
   ?manufacturer ?manufacturerLabel
   ?manufacturerCountry ?manufacturerCountryLabel
   ?wingspan ?length
-  ?firstFlight ?introduced ?retired
+  ?crew ?passengerCapacity
+  ?firstFlight ?introduced
   ?conflict ?conflictLabel
-  ?status ?statusLabel
   ?article
 WHERE {
   ${typeMatchClause}
@@ -415,12 +414,12 @@ WHERE {
   OPTIONAL { ?aircraft wdt:P2050 ?wingspan . }
   # Length (P2043) in meters
   OPTIONAL { ?aircraft wdt:P2043 ?length . }
+  # Crew (P1873)
+  OPTIONAL { ?aircraft wdt:P1873 ?crew . }
+  # Passenger capacity (P1083)
+  OPTIONAL { ?aircraft wdt:P1083 ?passengerCapacity . }
   # Conflicts (P607)
   OPTIONAL { ?aircraft wdt:P607 ?conflict . }
-  # Retired date (P730)
-  OPTIONAL { ?aircraft wdt:P730 ?retired . }
-  # Service status (P1308)
-  OPTIONAL { ?aircraft wdt:P1308 ?status . }
 
   OPTIONAL {
     ?article schema:about ?aircraft ;
@@ -524,32 +523,14 @@ function parseAircraftResult(results: WikidataAircraftResult[]): SelectedAircraf
     }
   }
 
-  let status: string | null = null;
-  const retired = first.retired?.value
-    ? new Date(first.retired.value).getFullYear().toString()
-    : null;
-
-  if (first.statusLabel?.value) {
-    status = first.statusLabel.value;
-  } else if (retired) {
-    status = `Retired ${retired}`;
-  } else {
-    const conflictArray = Array.from(conflicts);
-    const recentConflicts = conflictArray.filter((c) => {
-      const lower = c.toLowerCase();
-      return (
-        lower.includes('iraq') ||
-        lower.includes('afghan') ||
-        lower.includes('gulf') ||
-        lower.includes('syria') ||
-        lower.includes('2000') ||
-        lower.includes('2010') ||
-        lower.includes('2020')
-      );
-    });
-    if (recentConflicts.length > 0) {
-      status = 'Active or recently active';
-    }
+  // Capacity: prefer passenger capacity for commercial, otherwise use crew
+  let capacity: string | null = null;
+  if (first.passengerCapacity?.value) {
+    const passengers = Math.round(parseFloat(first.passengerCapacity.value));
+    capacity = `${passengers} passengers`;
+  } else if (first.crew?.value) {
+    const crew = Math.round(parseFloat(first.crew.value));
+    capacity = crew === 1 ? '1 crew' : `${crew} crew`;
   }
 
   const firstFlight = first.firstFlight?.value
@@ -568,13 +549,12 @@ function parseAircraftResult(results: WikidataAircraftResult[]): SelectedAircraf
     country,
     wingspan: first.wingspan?.value ? `${Math.round(parseFloat(first.wingspan.value))}m` : null,
     length: first.length?.value ? `${Math.round(parseFloat(first.length.value))}m` : null,
+    capacity,
     manufacturer: first.manufacturerLabel?.value || null,
     firstFlight,
     introduced: first.introduced?.value
       ? new Date(first.introduced.value).getFullYear().toString()
       : null,
-    retired,
-    status,
     conflicts: Array.from(conflicts),
     wikipediaTitle,
   };
@@ -690,15 +670,15 @@ function buildSpecsClue(aircraft: SelectedAircraft): SpecsClue {
     class: aircraft.className,
     manufacturer: aircraft.manufacturer,
     wingspan: aircraft.wingspan,
-    firstFlight: aircraft.firstFlight,
+    capacity: aircraft.capacity,
   };
 }
 
 function buildContextClue(aircraft: SelectedAircraft): ContextClue {
   return {
     nation: aircraft.country || 'Unknown',
+    firstFlight: aircraft.firstFlight,
     conflicts: aircraft.conflicts,
-    status: aircraft.status,
   };
 }
 

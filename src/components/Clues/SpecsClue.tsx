@@ -13,7 +13,7 @@ export interface SpecsClueProps {
 
 /**
  * SpecsClue displays aircraft technical specifications (Turn 2).
- * Shows: Role, Manufacturer, Wingspan, First Flight date.
+ * Shows: Manufacturer, Wingspan, Capacity/Crew.
  */
 export function SpecsClue({
   data,
@@ -23,7 +23,7 @@ export function SpecsClue({
   const specs = [
     { label: 'Manufacturer', value: data.manufacturer },
     { label: 'Wingspan', value: data.wingspan },
-    { label: 'First Flight', value: data.firstFlight },
+    { label: 'Capacity', value: data.capacity },
   ];
 
   return (

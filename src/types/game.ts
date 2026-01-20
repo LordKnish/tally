@@ -5,7 +5,7 @@
 
 /**
  * Specs clue shown on Turn 2.
- * Example: "Manufacturer: Lockheed Martin | Wingspan: 9.96m | First Flight: 1974"
+ * Example: "Manufacturer: Lockheed Martin | Wingspan: 9.96m | Crew: 2"
  */
 export interface SpecsClue {
   /** Aircraft class/role (e.g., "fighter aircraft", "bomber") - from Wikidata P31 */
@@ -14,21 +14,21 @@ export interface SpecsClue {
   manufacturer: string | null;
   /** Wingspan (e.g., "9.96m") - from Wikidata P2050 */
   wingspan: string | null;
-  /** First flight year (e.g., "1974") - from Wikidata P606 */
-  firstFlight: string | null;
+  /** Crew or passenger capacity (e.g., "2" or "150-180") - from Wikidata P1873/P1083 */
+  capacity: string | null;
 }
 
 /**
  * Context clue shown on Turn 3.
- * Example: "Nation: USA | Conflicts: Gulf War, Afghanistan | Status: Active"
+ * Example: "Nation: USA | First Flight: 1974 | Conflicts: Gulf War, Afghanistan"
  */
 export interface ContextClue {
   /** Country of origin (e.g., "United States") - from Wikidata P495 */
   nation: string;
+  /** First flight year (e.g., "1974") - from Wikidata P606 */
+  firstFlight: string | null;
   /** Notable conflicts the aircraft participated in - from Wikidata P607 */
   conflicts: string[];
-  /** Current status (e.g., "In service", "Retired 2005") - from Wikidata P1308/P730 */
-  status: string | null;
 }
 
 /**

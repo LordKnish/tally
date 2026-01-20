@@ -96,7 +96,7 @@ export interface ContextClueProps {
 
 /**
  * ContextClue displays historical context (Turn 3).
- * Shows: Nation, Conflicts, Status.
+ * Shows: Nation, First Flight, Conflicts.
  */
 export function ContextClue({
   data,
@@ -122,9 +122,9 @@ export function ContextClue({
         </div>
 
         <div className="context-clue__item">
-          <dt className="context-clue__label">Status</dt>
+          <dt className="context-clue__label">First Flight</dt>
           <dd className="context-clue__value">
-            {data.status ?? (
+            {data.firstFlight ?? (
               <span className="context-clue__none">Unknown</span>
             )}
           </dd>

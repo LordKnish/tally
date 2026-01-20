@@ -30,12 +30,12 @@ interface GameData {
       class: string | null;
       manufacturer: string | null;
       wingspan: string | null;
-      firstFlight: string | null;
+      capacity: string | null;
     };
     context: {
       nation: string;
+      firstFlight: string | null;
       conflicts: string[];
-      status: string | null;
     };
     trivia: string | null;
     photo: string;
@@ -119,10 +119,10 @@ export default async function handler(
         clues_specs_class,
         clues_specs_manufacturer,
         clues_specs_wingspan,
-        clues_specs_first_flight,
+        clues_specs_capacity,
         clues_context_nation,
+        clues_context_first_flight,
         clues_context_conflicts,
-        clues_context_status,
         clues_trivia,
         clues_photo
       FROM tally_game_data
@@ -155,12 +155,12 @@ export default async function handler(
           class: row.clues_specs_class,
           manufacturer: row.clues_specs_manufacturer,
           wingspan: row.clues_specs_wingspan,
-          firstFlight: row.clues_specs_first_flight,
+          capacity: row.clues_specs_capacity,
         },
         context: {
           nation: row.clues_context_nation,
+          firstFlight: row.clues_context_first_flight,
           conflicts: row.clues_context_conflicts || [],
-          status: row.clues_context_status,
         },
         trivia: row.clues_trivia,
         photo: row.clues_photo,
