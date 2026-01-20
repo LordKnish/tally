@@ -17,8 +17,8 @@ A daily aircraft guessing game for aviation enthusiasts. Identify famous aircraf
 2. **Make Your Guess** — Search and select from a comprehensive aircraft database
 3. **Receive Clues** — Each incorrect guess reveals more information:
    - **Turn 1:** Silhouette only
-   - **Turn 2:** Specifications (wingspan, weight, first flight year)
-   - **Turn 3:** Context (country of origin, operators, status)
+   - **Turn 2:** Specifications (role, manufacturer, wingspan, first flight)
+   - **Turn 3:** Context (country of origin, notable conflicts, status)
    - **Turn 4:** Trivia fact
    - **Turn 5:** Photograph revealed
 4. **Identify or Learn** — Name the aircraft within 5 guesses, or discover what it was!
@@ -29,14 +29,12 @@ A daily aircraft guessing game for aviation enthusiasts. Identify famous aircraf
 
 Tally offers multiple themed modes to test your aviation knowledge:
 
-| Mode | Description | Icon |
-|------|-------------|------|
-| **Daily Tally** | Modern military aircraft (1980–present) | ✈️ |
-| **Commercial** | Airliners & business jets (1980–present) | 🛫 |
-| **WW2** | World War 2 military aircraft (1935–1950) | 🎖️ |
-| **WW1** | World War 1 aircraft (1910–1925) | 🔴 |
-| **Helicopters** | All rotary-wing aircraft | 🚁 |
-| **Drones** | UAVs and unmanned aircraft | 🤖 |
+| Mode | Description | Aircraft | Icon |
+|------|-------------|----------|------|
+| **Daily Tally** | Modern military aircraft (1980–present) | 263 | ✈️ |
+| **Commercial** | Airliners & business jets (1970–present) | 157 | 🛫 |
+| **WW2** | World War 2 military aircraft (1935–1950) | 411 | 🎖️ |
+| **Golden Age** | Early aviation pioneers (pre-1940) | 566 | 🔴 |
 
 ---
 
@@ -138,7 +136,7 @@ tally/
 
 ## 🎨 Game Data Format
 
-Daily games are loaded from `public/game-data-{mode}.json`:
+Daily games are fetched from the API (`/api/game/today?mode=MODE`):
 
 ```json
 {
@@ -146,21 +144,20 @@ Daily games are loaded from `public/game-data-{mode}.json`:
   "aircraft": {
     "id": "Q12345",
     "name": "F-16 Fighting Falcon",
-    "typeName": "Multirole fighter",
     "aliases": ["F-16", "Viper", "Fighting Falcon"]
   },
   "silhouette": "data:image/png;base64,...",
   "clues": {
     "specs": {
-      "type": "Multirole fighter",
-      "weight": "19 tonnes",
-      "wingspan": "9.96m",
+      "class": "multirole combat aircraft",
+      "manufacturer": "General Dynamics",
+      "wingspan": "10m",
       "firstFlight": "1974"
     },
     "context": {
       "nation": "United States",
-      "operators": ["USAF", "Israeli Air Force", "Turkish Air Force"],
-      "status": "In production"
+      "conflicts": ["Gulf War", "Iraq War", "War in Afghanistan"],
+      "status": "In service"
     },
     "trivia": "Over 4,600 built, making it one of the most numerous fighters in history.",
     "photo": "https://commons.wikimedia.org/..."
@@ -170,29 +167,51 @@ Daily games are loaded from `public/game-data-{mode}.json`:
 
 ---
 
+## 🔧 API Endpoints
+
+### Fetch Today's Game
+```bash
+# Get today's game for a specific mode
+curl "https://your-domain.vercel.app/api/game/today?mode=main"
+curl "https://your-domain.vercel.app/api/game/today?mode=commercial"
+curl "https://your-domain.vercel.app/api/game/today?mode=ww2"
+curl "https://your-domain.vercel.app/api/game/today?mode=goldenage"
+
+# List all available modes
+curl "https://your-domain.vercel.app/api/game/today?all"
+```
+
+### Generate Games (Manual Trigger)
+```bash
+# Generate for a specific mode
+curl "https://your-domain.vercel.app/api/cron/generate-game?manual=true&secret=YOUR_CRON_SECRET&mode=main"
+
+# Generate for all modes
+curl "https://your-domain.vercel.app/api/cron/generate-game?manual=true&secret=YOUR_CRON_SECRET&all=everything"
+```
+
+### Environment Variables
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `POSTGRES_URL` | Yes | Neon PostgreSQL connection string |
+| `CRON_SECRET` | Yes | Secret for manual game generation |
+| `REMOVEBG_API_KEY` | No | For better silhouette quality |
+
+---
+
 ## 🔧 Data Pipeline
 
-The project includes scripts to source and process aircraft data:
-
-### Fetch Aircraft Data
-
+### Generate Aircraft List
 ```bash
-cd scripts/data-pipeline
-npm install
-npm run fetch
+npx tsx scripts/generate-aircraft-list.ts
 ```
+This queries Wikidata for aircraft with images and generates `public/aircraft-list.json`.
 
-This queries Wikidata for aircraft with images and relevant metadata.
-
-### Generate Daily Games
-
+### Test Mode Coverage
 ```bash
-cd scripts/game-generator
-npm install
-npm run generate
+npx tsx scripts/test-game-generation.ts
 ```
-
-This selects a random aircraft for each mode and generates the clue package.
+Reports eligible aircraft count for each game mode.
 
 ---
 
