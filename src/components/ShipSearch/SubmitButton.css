@@ -1,0 +1,28 @@
+/* ==========================================================================
+   Submit Button - Guess Submission (shadcn Button)
+   ========================================================================== */
+
+.submit-button {
+  /* Minimum touch target size for accessibility */
+  min-height: 48px;
+  min-width: 120px;
+  padding: var(--space-3) var(--space-6);
+
+  /* Typography */
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (min-width: 640px) {
+  .submit-button {
+    min-width: 140px;
+    padding: var(--space-4) var(--space-8);
+  }
+}

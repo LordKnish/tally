@@ -1,0 +1,53 @@
+/* ==========================================================================
+   TurnIndicator Component
+   ========================================================================== */
+
+.turn-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+}
+
+.turn-indicator__dot {
+  width: 12px;
+  height: 12px;
+  border-radius: var(--radius-full);
+  transition: background-color var(--transition-normal),
+              transform var(--transition-normal);
+}
+
+/* Upcoming turn - light gray, smaller */
+.turn-indicator__dot--upcoming {
+  background-color: var(--color-border);
+}
+
+/* Current turn - highlighted with ring */
+.turn-indicator__dot--current {
+  background-color: var(--color-text);
+  transform: scale(1.25);
+  box-shadow: 0 0 0 3px var(--color-background),
+              0 0 0 5px var(--color-text);
+}
+
+/* Correct guess - success green */
+.turn-indicator__dot--correct {
+  background-color: var(--color-success);
+}
+
+/* Wrong guess - red */
+.turn-indicator__dot--wrong {
+  background-color: var(--color-error);
+}
+
+/* Tablet and up - larger dots */
+@media (min-width: 640px) {
+  .turn-indicator {
+    gap: var(--space-4);
+  }
+
+  .turn-indicator__dot {
+    width: 14px;
+    height: 14px;
+  }
+}

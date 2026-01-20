@@ -1,0 +1,19 @@
+{
+  "ships": [
+    {
+      "id": "Q6718233",
+      "name": "IMO 9506239",
+      "usedDate": "2026-01-19"
+    },
+    {
+      "id": "Q535817",
+      "name": "HMS Spur",
+      "usedDate": "2026-01-19"
+    },
+    {
+      "id": "Q749820",
+      "name": "Dmitri Donskoi",
+      "usedDate": "2026-01-19"
+    }
+  ]
+}

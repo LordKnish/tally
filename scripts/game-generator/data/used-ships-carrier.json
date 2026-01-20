@@ -1,0 +1,14 @@
+{
+  "ships": [
+    {
+      "id": "Q274924",
+      "name": "Admiral Kuznetsov",
+      "usedDate": "2026-01-19"
+    },
+    {
+      "id": "Q1476031",
+      "name": "HMS Courageous",
+      "usedDate": "2026-01-19"
+    }
+  ]
+}

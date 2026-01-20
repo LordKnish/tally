@@ -1,0 +1,94 @@
+/* ==========================================================================
+   Guess History - Previous Guesses Display
+   ========================================================================== */
+
+.guess-history {
+  width: 100%;
+  padding: var(--space-4);
+}
+
+.guess-history__title {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-3);
+}
+
+/* ==========================================================================
+   List & Items
+   ========================================================================== */
+
+.guess-history__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.guess-history__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  animation: cardReveal 0.4s ease-out forwards;
+  opacity: 0;
+}
+
+/* ==========================================================================
+   Correct / Wrong States
+   ========================================================================== */
+
+.guess-history__item--correct {
+  background-color: var(--color-success);
+  color: white;
+}
+
+.guess-history__item--wrong {
+  background-color: var(--color-wrong);
+  color: white;
+}
+
+/* ==========================================================================
+   Icon & Ship Name
+   ========================================================================== */
+
+.guess-history__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  flex-shrink: 0;
+}
+
+.guess-history__ship-name {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (min-width: 640px) {
+  .guess-history {
+    padding: var(--space-6);
+  }
+
+  .guess-history__item {
+    padding: var(--space-4) var(--space-5);
+  }
+}

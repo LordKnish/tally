@@ -1,0 +1,86 @@
+/* ==========================================================================
+   ClueCard Component
+   ========================================================================== */
+
+.clue-card {
+  background-color: var(--color-card-hidden);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  transition: background-color var(--transition-reveal);
+}
+
+/* Variant background colors when revealed */
+.clue-card--specs.clue-card--revealed {
+  background-color: var(--color-card-specs);
+}
+
+.clue-card--context.clue-card--revealed {
+  background-color: var(--color-card-context);
+}
+
+.clue-card--trivia.clue-card--revealed {
+  background-color: var(--color-card-trivia);
+}
+
+.clue-card--photo.clue-card--revealed {
+  background-color: var(--color-card-photo);
+}
+
+/* Title styling */
+.clue-card__title {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-2);
+}
+
+/* Content area */
+.clue-card__content {
+  min-height: 2rem;
+}
+
+/* Hidden placeholder */
+.clue-card__hidden {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 3rem;
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-muted);
+  opacity: 0.5;
+}
+
+/* Revealed content with animation */
+.clue-card__revealed-content {
+  animation: cardReveal 0.4s ease-out forwards;
+}
+
+/* Import animation keyframes */
+@keyframes cardReveal {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .clue-card__revealed-content {
+    animation: none;
+  }
+}
+
+/* Tablet and up */
+@media (min-width: 640px) {
+  .clue-card {
+    padding: var(--space-5);
+  }
+}

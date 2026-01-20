@@ -1,0 +1,202 @@
+{
+  "generatedAt": "2026-01-19T09:02:42.095Z",
+  "count": 49,
+  "classes": [
+    {
+      "id": "class:ada-class-corvette",
+      "name": "Ada-class corvette"
+    },
+    {
+      "id": "class:admiral-grigorovich-class-frigate",
+      "name": "Admiral Grigorovich-class frigate"
+    },
+    {
+      "id": "class:al-aziz-class-frigate",
+      "name": "Al-Aziz-class frigate"
+    },
+    {
+      "id": "class:amazonas-class-corvette",
+      "name": "Amazonas-class corvette"
+    },
+    {
+      "id": "class:anzac-class-frigate",
+      "name": "Anzac-class frigate"
+    },
+    {
+      "id": "class:aquitaine-class-frigate",
+      "name": "Aquitaine-class frigate"
+    },
+    {
+      "id": "class:arleigh-burke-class-destroyer",
+      "name": "Arleigh Burke-class destroyer"
+    },
+    {
+      "id": "class:baden-w-rttemberg-class-frigate",
+      "name": "Baden-Württemberg-class frigate"
+    },
+    {
+      "id": "class:barbaros-class-frigate",
+      "name": "Barbaros-class frigate"
+    },
+    {
+      "id": "class:bartolomeu-dias-class-frigate",
+      "name": "Bartolomeu Dias-class frigate"
+    },
+    {
+      "id": "class:braunschweig-class-corvette",
+      "name": "Braunschweig-class corvette"
+    },
+    {
+      "id": "class:bremen-class-frigate",
+      "name": "Bremen-class frigate"
+    },
+    {
+      "id": "class:buyan-class-corvette",
+      "name": "Buyan-class corvette"
+    },
+    {
+      "id": "class:cakra-class-submarine",
+      "name": "Cakra-class submarine"
+    },
+    {
+      "id": "class:canadian-river-class-destroyer",
+      "name": "Canadian River-class destroyer"
+    },
+    {
+      "id": "class:de-zeven-provinci-n-class-frigate",
+      "name": "De Zeven Provinciën-class frigate"
+    },
+    {
+      "id": "class:flor-al-class-frigate",
+      "name": "Floréal-class frigate"
+    },
+    {
+      "id": "class:fridtjof-nansen-class-frigate",
+      "name": "Fridtjof Nansen-class frigate"
+    },
+    {
+      "id": "class:g-and-h-class-destroyer",
+      "name": "G and H-class destroyer"
+    },
+    {
+      "id": "class:georges-leygues-class-frigate",
+      "name": "Georges Leygues-class frigate"
+    },
+    {
+      "id": "class:heroine-class-submarine",
+      "name": "Heroine-class submarine"
+    },
+    {
+      "id": "class:horizon-class-frigate",
+      "name": "Horizon-class frigate"
+    },
+    {
+      "id": "class:karel-doorman-class-frigate",
+      "name": "Karel Doorman-class frigate"
+    },
+    {
+      "id": "class:kortenaer-class-frigate",
+      "name": "Kortenaer-class frigate"
+    },
+    {
+      "id": "class:kuznetsov-class-aircraft-carrier",
+      "name": "Kuznetsov-class aircraft carrier"
+    },
+    {
+      "id": "class:leander-class-frigate",
+      "name": "Leander-class frigate"
+    },
+    {
+      "id": "class:moudge-class-frigate",
+      "name": "Moudge-class frigate"
+    },
+    {
+      "id": "class:n-cken-class-submarine",
+      "name": "Näcken-class submarine"
+    },
+    {
+      "id": "class:neustrashimyy-class-frigate",
+      "name": "Neustrashimyy-class frigate"
+    },
+    {
+      "id": "class:peacock-class-corvette",
+      "name": "Peacock-class corvette"
+    },
+    {
+      "id": "class:project-1143-0-sevmashpredpriyatie-aircraft-carrier",
+      "name": "Project 1143.0 Sevmashpredpriyatie aircraft carrier"
+    },
+    {
+      "id": "class:ratanakosin-class-corvette",
+      "name": "Ratanakosin-class corvette"
+    },
+    {
+      "id": "class:santa-mar-a-class-frigate",
+      "name": "Santa María-class frigate"
+    },
+    {
+      "id": "class:sovremenny-class-destroyer",
+      "name": "Sovremenny-class destroyer"
+    },
+    {
+      "id": "class:spruance-class-destroyer",
+      "name": "Spruance-class destroyer"
+    },
+    {
+      "id": "class:stockholm-class-corvette",
+      "name": "Stockholm-class corvette"
+    },
+    {
+      "id": "class:sultan-moulay-ismail-class-frigate",
+      "name": "Sultan Moulay Ismail-class frigate"
+    },
+    {
+      "id": "class:type-051-destroyer",
+      "name": "Type 051 destroyer"
+    },
+    {
+      "id": "class:type-054a-frigate",
+      "name": "Type 054A frigate"
+    },
+    {
+      "id": "class:type-22-frigate",
+      "name": "Type 22 frigate"
+    },
+    {
+      "id": "class:type-23-frigate",
+      "name": "Type 23 frigate"
+    },
+    {
+      "id": "class:type-42-guided-missile-destroyer",
+      "name": "Type 42 guided missile destroyer"
+    },
+    {
+      "id": "class:type-45-guided-missile-destroyer",
+      "name": "Type 45 guided missile destroyer"
+    },
+    {
+      "id": "class:udaloy-class-destroyer",
+      "name": "Udaloy-class destroyer"
+    },
+    {
+      "id": "class:valour-class-frigate",
+      "name": "Valour-class frigate"
+    },
+    {
+      "id": "class:vasco-da-gama-class-frigate",
+      "name": "Vasco da Gama-class frigate"
+    },
+    {
+      "id": "class:visby-class-corvette",
+      "name": "Visby-class corvette"
+    },
+    {
+      "id": "class:y-shio-class-submarine",
+      "name": "Yūshio-class submarine"
+    },
+    {
+      "id": "class:zulfiquar-class-frigate",
+      "name": "Zulfiquar-class frigate"
+    }
+  ]
+}

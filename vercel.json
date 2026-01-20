@@ -1,0 +1,18 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "framework": "vite",
+  "crons": [
+    {
+      "path": "/api/cron/generate-game",
+      "schedule": "0 0 * * *"
+    }
+  ],
+  "rewrites": [
+    { "source": "/ww2", "destination": "/" },
+    { "source": "/cold-war", "destination": "/" },
+    { "source": "/carrier", "destination": "/" },
+    { "source": "/submarine", "destination": "/" },
+    { "source": "/small-ships", "destination": "/" }
+  ]
+}

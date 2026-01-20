@@ -1,0 +1,16 @@
+{
+  "name": "Tally - Daily Aircraft Guessing Game",
+  "short_name": "Tally",
+  "description": "A daily challenge game for aviation enthusiasts. Identify aircraft from silhouettes in 5 guesses or less. Tally-ho!",
+  "icons": [
+    {
+      "src": "/FAVICON.png",
+      "sizes": "any",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#0f172a",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "start_url": "/"
+}

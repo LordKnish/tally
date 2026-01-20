@@ -1,0 +1,223 @@
+/* ==========================================================================
+   WinModal Component
+   ========================================================================== */
+
+.win-modal-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: var(--z-modal);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.win-modal {
+  position: relative;
+  width: 90%;
+  max-width: 400px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background-color: var(--color-background);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  animation: slideUp 0.4s ease-out;
+}
+
+.win-modal__close {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  font-size: 24px;
+  line-height: 1;
+  color: var(--color-text-muted);
+  background: none;
+  border: none;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.win-modal__close:hover {
+  background-color: var(--color-hover);
+  color: var(--color-text);
+}
+
+.win-modal__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-8) var(--space-6);
+  text-align: center;
+}
+
+.win-modal__title {
+  font-family: var(--font-header);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  margin-bottom: var(--space-2);
+}
+
+.win-modal__class-name {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  margin-bottom: var(--space-1);
+}
+
+.win-modal__ship-name {
+  font-size: var(--font-size-base);
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-6);
+}
+
+.win-modal__stats {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-8);
+  margin-bottom: var(--space-6);
+}
+
+.win-modal__stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.win-modal__stat-value {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+}
+
+.win-modal__stat-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.win-modal__result {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-6);
+}
+
+.win-modal__dot {
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-full);
+}
+
+.win-modal__dot--correct {
+  background-color: var(--color-success);
+}
+
+.win-modal__dot--wrong {
+  background-color: var(--color-error);
+}
+
+.win-modal__share-buttons {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.win-modal__share-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-width: 140px;
+  padding: var(--space-3) var(--space-5);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: white;
+  background-color: var(--color-success);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.win-modal__share-button:hover {
+  background-color: #5a9a54;
+  transform: scale(1.02);
+}
+
+.win-modal__share-button:active {
+  transform: scale(0.98);
+}
+
+.win-modal__share-button--x {
+  background-color: #000;
+}
+
+.win-modal__share-button--x:hover {
+  background-color: #333;
+}
+
+.win-modal__share-preview {
+  margin-top: var(--space-6);
+  padding: var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  background-color: var(--color-card-specs);
+  border-radius: var(--radius-md);
+  white-space: pre-line;
+  text-align: left;
+  width: 100%;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Tablet and up */
+@media (min-width: 640px) {
+  .win-modal {
+    max-width: 450px;
+  }
+
+  .win-modal__title {
+    font-size: var(--font-size-3xl);
+  }
+
+  .win-modal__stat-value {
+    font-size: var(--font-size-4xl);
+  }
+
+  .win-modal__dot {
+    width: 24px;
+    height: 24px;
+  }
+}

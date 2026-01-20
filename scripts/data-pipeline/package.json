@@ -1,0 +1,25 @@
+{
+  "name": "keel-data-pipeline",
+  "version": "1.0.0",
+  "description": "Data pipeline for fetching warship data from Wikidata",
+  "type": "module",
+  "scripts": {
+    "fetch": "tsx src/fetch-ships.ts",
+    "download-images": "tsx src/download-images.ts",
+    "validate": "tsx src/validate-data.ts",
+    "test-pipeline": "tsx src/test-pipeline.ts"
+  },
+  "keywords": [
+    "wikidata",
+    "warships",
+    "data-pipeline"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@types/node": "^25.0.9",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "wikidata-sdk": "^8.1.1"
+  }
+}

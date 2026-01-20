@@ -1,0 +1,103 @@
+/* ==========================================================================
+   GameLayout Component
+   ========================================================================== */
+
+.game-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  max-width: var(--container-md);
+  margin: 0 auto;
+  padding: var(--space-4);
+}
+
+/* Header */
+.game-layout__header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: var(--space-4);
+}
+
+/* Main content area */
+.game-layout__main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  flex: 1;
+}
+
+/* Silhouette section */
+.game-layout__silhouette {
+  width: 100%;
+}
+
+/* Turn indicator */
+.game-layout__turn-indicator {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-2) 0;
+}
+
+/* Clues section */
+.game-layout__clues {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* Guess history section */
+.game-layout__guess-history {
+  padding-top: var(--space-2);
+}
+
+/* Footer */
+.game-layout__footer {
+  position: sticky;
+  bottom: 0;
+  background-color: var(--color-background);
+  padding: var(--space-4) 0;
+  margin-top: auto;
+  border-top: 1px solid var(--color-border);
+}
+
+/* Search area within footer */
+.game-layout__search {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* Tablet and up */
+@media (min-width: 640px) {
+  .game-layout {
+    padding: var(--space-6);
+  }
+
+  .game-layout__header {
+    padding-bottom: var(--space-6);
+    margin-bottom: var(--space-6);
+  }
+
+  .game-layout__main {
+    gap: var(--space-6);
+  }
+
+  .game-layout__clues {
+    gap: var(--space-4);
+  }
+
+  .game-layout__footer {
+    padding: var(--space-6) 0;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .game-layout {
+    padding: var(--space-8);
+  }
+}

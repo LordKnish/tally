@@ -1,0 +1,130 @@
+/* ==========================================================================
+   Silhouette Component
+   ========================================================================== */
+
+.silhouette {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: var(--space-4);
+  background-color: var(--color-silhouette-bg);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  cursor: pointer;
+  transition: box-shadow 0.2s ease;
+}
+
+.silhouette:hover {
+  box-shadow: 0 0 0 2px var(--color-primary);
+}
+
+.silhouette:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.silhouette__image {
+  display: block;
+  max-width: 100%;
+  max-height: 300px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  user-select: none;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.silhouette__image--hidden {
+  opacity: 0;
+}
+
+.silhouette__photo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: block;
+  max-width: calc(100% - var(--space-8));
+  max-height: 300px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  user-select: none;
+  border-radius: var(--radius-sm);
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.silhouette__photo--visible {
+  opacity: 1;
+}
+
+/* Tablet and up */
+@media (min-width: 640px) {
+  .silhouette {
+    padding: var(--space-6);
+  }
+
+  .silhouette__image {
+    max-height: 350px;
+  }
+
+  .silhouette__photo {
+    max-width: calc(100% - var(--space-12));
+    max-height: 350px;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .silhouette__image {
+    max-height: 400px;
+  }
+
+  .silhouette__photo {
+    max-height: 400px;
+  }
+}
+
+/* Zoom hint overlay */
+.silhouette__zoom-hint {
+  position: absolute;
+  bottom: var(--space-3);
+  right: var(--space-3);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: var(--radius-md);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+.silhouette:hover .silhouette__zoom-hint,
+.silhouette:focus-visible .silhouette__zoom-hint {
+  opacity: 1;
+}
+
+.silhouette__zoom-icon {
+  font-size: 0.875rem;
+}
+
+.silhouette__zoom-text {
+  font-size: 0.75rem;
+  color: var(--color-text-primary);
+  font-weight: 500;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .silhouette,
+  .silhouette__image,
+  .silhouette__photo,
+  .silhouette__zoom-hint {
+    transition: none;
+  }
+}

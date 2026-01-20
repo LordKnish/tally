@@ -1,0 +1,116 @@
+/* ==========================================================================
+   Ship Search - Autocomplete Component
+   ========================================================================== */
+
+.ship-search {
+  position: relative;
+  width: 100%;
+}
+
+.ship-search--error {
+  text-align: center;
+  padding: var(--space-4);
+}
+
+.ship-search__error-message {
+  color: #c53030;
+  font-size: var(--font-size-sm);
+}
+
+/* ==========================================================================
+   Input Wrapper
+   ========================================================================== */
+
+.ship-search__input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  background-color: white;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.ship-search__input-wrapper:focus-within {
+  border-color: var(--color-focus);
+  box-shadow: 0 0 0 3px rgba(74, 144, 217, 0.15);
+}
+
+.ship-search__input-wrapper:has(input:disabled) {
+  background-color: var(--color-background);
+  opacity: 0.7;
+}
+
+.ship-search__icon {
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+  opacity: 0.5;
+}
+
+/* ==========================================================================
+   Input Styling
+   ========================================================================== */
+
+.ship-search__input {
+  flex: 1;
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-normal);
+  color: var(--color-text);
+  outline: none;
+}
+
+.ship-search__input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.ship-search__input:disabled {
+  cursor: not-allowed;
+}
+
+/* ==========================================================================
+   Dropdown List
+   ========================================================================== */
+
+.ship-search__list {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  right: 0;
+  margin-bottom: var(--space-1);
+  max-height: 300px;
+  overflow-y: auto;
+  padding: var(--space-1);
+  background-color: white;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  z-index: var(--z-dropdown);
+  list-style: none;
+}
+
+/* ==========================================================================
+   List Items
+   ========================================================================== */
+
+.ship-search__item {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  line-height: var(--line-height-normal);
+  transition: background-color var(--transition-fast);
+}
+
+.ship-search__item:hover,
+.ship-search__item--selected {
+  background-color: var(--color-hover);
+}

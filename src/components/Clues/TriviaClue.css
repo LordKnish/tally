@@ -1,0 +1,32 @@
+/* ==========================================================================
+   TriviaClue Component
+   ========================================================================== */
+
+.trivia-clue {
+  margin: 0;
+  padding: 0;
+  padding-left: var(--space-4);
+  border-left: 3px solid var(--color-success);
+}
+
+.trivia-clue__text {
+  margin: 0;
+  font-family: var(--font-header);
+  font-size: var(--font-size-base);
+  font-style: italic;
+  line-height: var(--line-height-relaxed);
+  color: var(--color-text);
+}
+
+.trivia-clue__none {
+  margin: 0;
+  font-style: italic;
+  color: var(--color-text-muted);
+}
+
+/* Tablet and up */
+@media (min-width: 640px) {
+  .trivia-clue__text {
+    font-size: var(--font-size-lg);
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "ships": [
+    {
+      "id": "Q3270272",
+      "name": "HMS Temeraire",
+      "usedDate": "2026-01-19"
+    },
+    {
+      "id": "Q112064253",
+      "name": "NRP Bellatrix",
+      "usedDate": "2026-01-19"
+    },
+    {
+      "id": "Q52377724",
+      "name": "JCG Hida",
+      "usedDate": "2026-01-19"
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+/* ==========================================================================
+   Spinner - Loading Indicator
+   ========================================================================== */
+
+.spinner {
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-focus);
+  border-radius: var(--radius-full);
+  animation: spin 0.8s linear infinite;
+}
+
+/* Size variants */
+.spinner--sm {
+  width: 16px;
+  height: 16px;
+}
+
+.spinner--md {
+  width: 24px;
+  height: 24px;
+}
+
+.spinner--lg {
+  width: 32px;
+  height: 32px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
