@@ -2,7 +2,7 @@
  * Game mode types for multi-mode support in Tally frontend.
  */
 
-export type GameModeId = 'main' | 'commercial' | 'ww2' | 'ww1' | 'helicopters' | 'drones';
+export type GameModeId = 'main' | 'commercial' | 'ww2' | 'goldenage';
 
 export interface GameModeConfig {
   id: GameModeId;
@@ -29,7 +29,7 @@ export const GAME_MODES: Record<GameModeId, GameModeConfig> = {
   commercial: {
     id: 'commercial',
     name: 'Commercial',
-    description: 'Airliners & business jets (1980+)',
+    description: 'Airliners & business jets (1970+)',
     icon: '🛫',
     dataFile: '/game-data-commercial.json',
     path: '/commercial',
@@ -42,41 +42,25 @@ export const GAME_MODES: Record<GameModeId, GameModeConfig> = {
     dataFile: '/game-data-ww2.json',
     path: '/ww2',
   },
-  ww1: {
-    id: 'ww1',
-    name: 'WW1',
-    description: 'World War 1 aircraft',
-    icon: '🔴',
-    dataFile: '/game-data-ww1.json',
-    path: '/ww1',
-  },
-  helicopters: {
-    id: 'helicopters',
-    name: 'Helicopters',
-    description: 'Rotary-wing aircraft',
-    icon: '🚁',
-    dataFile: '/game-data-helicopters.json',
-    path: '/helicopters',
-  },
-  drones: {
-    id: 'drones',
-    name: 'Drones',
-    description: 'UAVs and unmanned aircraft',
-    icon: '🤖',
-    dataFile: '/game-data-drones.json',
-    path: '/drones',
+  goldenage: {
+    id: 'goldenage',
+    name: 'Golden Age',
+    description: 'Early aviation pioneers (pre-1940)',
+    icon: '🛩️',
+    dataFile: '/game-data-goldenage.json',
+    path: '/goldenage',
   },
 };
 
 /**
  * All mode IDs in order.
  */
-export const ALL_MODE_IDS: GameModeId[] = ['main', 'commercial', 'ww2', 'ww1', 'helicopters', 'drones'];
+export const ALL_MODE_IDS: GameModeId[] = ['main', 'commercial', 'ww2', 'goldenage'];
 
 /**
  * Bonus mode IDs (excludes main).
  */
-export const BONUS_MODE_IDS: GameModeId[] = ['commercial', 'ww2', 'ww1', 'helicopters', 'drones'];
+export const BONUS_MODE_IDS: GameModeId[] = ['commercial', 'ww2', 'goldenage'];
 
 /**
  * Result of completing a mode.
