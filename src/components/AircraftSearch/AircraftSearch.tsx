@@ -1,27 +1,27 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { useShipSearch, type ShipListEntry } from '../../hooks/useShipSearch';
-import './ShipSearch.css';
+import { useAircraftSearch, type AircraftListEntry } from '../../hooks/useAircraftSearch';
+import './AircraftSearch.css';
 
-export interface ShipSearchProps {
-  /** Callback when a class is selected */
-  onSelect: (ship: ShipListEntry) => void;
+export interface AircraftSearchProps {
+  /** Callback when an aircraft is selected */
+  onSelect: (aircraft: AircraftListEntry) => void;
   /** Whether the search is disabled */
   disabled?: boolean;
-  /** Previously guessed class IDs to exclude from suggestions */
+  /** Previously guessed aircraft IDs to exclude from suggestions */
   excludeIds?: string[];
-  /** Target ship class that should always appear in results when relevant */
-  targetClass?: ShipListEntry;
+  /** Target aircraft that should always appear in results when relevant */
+  targetClass?: AircraftListEntry;
 }
 
 /**
- * Ship class search autocomplete component.
- * Provides accessible fuzzy search for ship class names.
+ * Aircraft search autocomplete component.
+ * Provides accessible fuzzy search for aircraft names.
  */
-export function ShipSearch({ onSelect, disabled = false, excludeIds = [], targetClass }: ShipSearchProps) {
-  const { search, isLoading, error } = useShipSearch();
+export function AircraftSearch({ onSelect, disabled = false, excludeIds = [], targetClass }: AircraftSearchProps) {
+  const { search, isLoading, error } = useAircraftSearch();
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
-  const [items, setItems] = useState<ShipListEntry[]>([]);
+  const [items, setItems] = useState<AircraftListEntry[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
@@ -36,7 +36,7 @@ export function ShipSearch({ onSelect, disabled = false, excludeIds = [], target
       if (value.length >= 2) {
         let results = search(value).filter(item => !excludeIds.includes(item.id));
 
-        // Ensure target class is always in results if it matches the query
+        // Ensure target aircraft is always in results if it matches the query
         if (targetClass && !excludeIds.includes(targetClass.id)) {
           const queryLower = value.toLowerCase();
           const targetMatches = targetClass.name.toLowerCase().includes(queryLower);
@@ -61,8 +61,8 @@ export function ShipSearch({ onSelect, disabled = false, excludeIds = [], target
   );
 
   const handleSelect = useCallback(
-    (ship: ShipListEntry) => {
-      onSelect(ship);
+    (aircraft: AircraftListEntry) => {
+      onSelect(aircraft);
       setInputValue('');
       setItems([]);
       setOpen(false);
@@ -133,19 +133,19 @@ export function ShipSearch({ onSelect, disabled = false, excludeIds = [], target
 
   if (error) {
     return (
-      <div className="ship-search ship-search--error">
-        <p className="ship-search__error-message">
-          Failed to load ship classes. Please refresh the page.
+      <div className="aircraft-search aircraft-search--error">
+        <p className="aircraft-search__error-message">
+          Failed to load aircraft. Please refresh the page.
         </p>
       </div>
     );
   }
 
   return (
-    <div className="ship-search">
-      <div className="ship-search__input-wrapper">
+    <div className="aircraft-search">
+      <div className="aircraft-search__input-wrapper">
         <svg
-          className="ship-search__icon"
+          className="aircraft-search__icon"
           xmlns="http://www.w3.org/2000/svg"
           width="16"
           height="16"
@@ -163,30 +163,30 @@ export function ShipSearch({ onSelect, disabled = false, excludeIds = [], target
         <input
           ref={inputRef}
           type="text"
-          className="ship-search__input"
-          placeholder={isLoading ? 'Loading classes...' : 'Type a ship class...'}
+          className="aircraft-search__input"
+          placeholder={isLoading ? 'Loading aircraft...' : 'Type an aircraft name...'}
           value={inputValue}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           disabled={disabled || isLoading}
-          aria-label="Search for a ship class"
+          aria-label="Search for an aircraft"
           aria-expanded={open}
           aria-autocomplete="list"
-          aria-controls={open ? 'ship-search-list' : undefined}
+          aria-controls={open ? 'aircraft-search-list' : undefined}
           autoComplete="off"
         />
       </div>
       {open && items.length > 0 && (
         <ul
           ref={listRef}
-          id="ship-search-list"
-          className="ship-search__list"
+          id="aircraft-search-list"
+          className="aircraft-search__list"
           role="listbox"
         >
           {items.map((item, index) => (
             <li
               key={item.id}
-              className={`ship-search__item ${index === selectedIndex ? 'ship-search__item--selected' : ''}`}
+              className={`aircraft-search__item ${index === selectedIndex ? 'aircraft-search__item--selected' : ''}`}
               role="option"
               aria-selected={index === selectedIndex}
               onClick={() => handleSelect(item)}
