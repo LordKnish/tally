@@ -160,12 +160,15 @@ const GAME_MODES: Record<GameModeId, ModeConfig> = {
   commercial: {
     id: 'commercial',
     name: 'Commercial',
-    yearMin: 1980,
+    yearMin: 1970,  // Relaxed from 1980 to include more aircraft
     yearMax: null,
     aircraftTypes: [
       'Q210932',    // airliner
       'Q197380',    // transport aircraft
       'Q1420024',   // business jet
+      'Q329014',    // cargo aircraft
+      'Q1261534',   // wide-body aircraft
+      'Q2996551',   // narrow-body aircraft
     ],
   },
   ww2: {
