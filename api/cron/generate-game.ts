@@ -647,10 +647,23 @@ function extractTrivia(summary: WikipediaSummary | null): string | null {
   const sentences = text.match(/[^.!?]+[.!?]+/g) || [];
 
   const interestingKeywords = [
+    // General notable facts
     'famous', 'notable', 'first', 'last', 'only', 'largest', 'fastest',
-    'shot down', 'crashed', 'battle', 'war', 'attack', 'served', 'participated',
     'known for', 'renamed', 'converted', 'museum', 'memorial',
     'preserved', 'film', 'movie', 'prototype', 'experimental',
+    // Combat and military
+    'shot down', 'crashed', 'battle', 'war', 'attack', 'served', 'participated',
+    'combat', 'ace', 'dogfight', 'squadron', 'mission', 'sortie',
+    'carrier', 'airbase', 'bombing', 'raid', 'interception',
+    // Performance records
+    'speed record', 'altitude record', 'payload', 'range record',
+    'world record', 'broke the', 'set a',
+    // Aviation technology
+    'maiden flight', 'test flight', 'maiden voyage',
+    'stealth', 'supersonic', 'hypersonic', 'jet', 'propeller', 'turboprop',
+    'cockpit', 'ejection', 'radar', 'avionics', 'afterburner',
+    // Production and service
+    'mass produced', 'exported', 'license', 'variant', 'derivative',
   ];
 
   for (const sentence of sentences.slice(1)) {
