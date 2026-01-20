@@ -14,7 +14,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "preview": "vite preview",
-    "generate:aircraft": "npx tsx scripts/generate-aircraft-list.ts"
+    "generate:aircraft": "npx tsx scripts/generate-aircraft-list.ts",
+    "test:modes": "npx tsx scripts/test-game-generation.ts"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",
