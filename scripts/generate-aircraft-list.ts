@@ -223,6 +223,121 @@ async function fetchAircraftByType(
 }
 
 // ============================================================================
+// Alias Extraction
+// ============================================================================
+
+/**
+ * Maximum alias length to include (longer aliases are filtered out)
+ */
+const MAX_ALIAS_LENGTH = 50;
+
+/**
+ * Extract Wikidata entity ID from URI
+ * @param uri Full Wikidata entity URI
+ * @returns Entity ID (e.g., "Q123")
+ */
+function extractEntityId(uri: string): string {
+  const match = uri.match(/Q\d+$/);
+  return match ? match[0] : uri;
+}
+
+/**
+ * Extract designation from aircraft name
+ * Examples:
+ *   "General Dynamics F-16 Fighting Falcon" -> "F-16"
+ *   "Lockheed Martin F-22 Raptor" -> "F-22"
+ *   "Boeing 747" -> "747"
+ *
+ * @param name Aircraft name
+ * @returns Extracted designation or null
+ */
+function extractDesignation(name: string): string | null {
+  // Pattern for military designations (F-16, Su-27, MiG-29, etc.)
+  const militaryPattern = /\b([A-Z]{1,3}[.-]?\d{1,3}[A-Z]?)\b/;
+  const militaryMatch = name.match(militaryPattern);
+  if (militaryMatch) {
+    return militaryMatch[1];
+  }
+
+  // Pattern for commercial aircraft (747, A320, etc.)
+  const commercialPattern = /\b([A-Z]?\d{2,3}[A-Z]?)\b/;
+  const commercialMatch = name.match(commercialPattern);
+  if (commercialMatch) {
+    return commercialMatch[1];
+  }
+
+  return null;
+}
+
+/**
+ * Process and filter aliases for an aircraft
+ * - Parse pipe-separated Wikidata aliases
+ * - Extract designation from name
+ * - Deduplicate
+ * - Filter out non-useful aliases
+ *
+ * @param rawAliases Pipe-separated alias string from Wikidata
+ * @param name Aircraft name
+ * @returns Array of clean, useful aliases
+ */
+function processAliases(rawAliases: string | undefined, name: string): string[] {
+  const aliasSet = new Set<string>();
+  const nameLower = name.toLowerCase();
+
+  // Parse Wikidata aliases
+  if (rawAliases) {
+    const aliases = rawAliases.split('|');
+    for (const alias of aliases) {
+      const trimmed = alias.trim();
+      if (trimmed) {
+        aliasSet.add(trimmed);
+      }
+    }
+  }
+
+  // Extract designation from name
+  const designation = extractDesignation(name);
+  if (designation) {
+    aliasSet.add(designation);
+  }
+
+  // Filter and clean aliases
+  const result: string[] = [];
+  for (const alias of aliasSet) {
+    // Skip if too long
+    if (alias.length > MAX_ALIAS_LENGTH) {
+      continue;
+    }
+
+    // Skip if identical to name (case-insensitive)
+    if (alias.toLowerCase() === nameLower) {
+      continue;
+    }
+
+    // Skip if it's just whitespace or punctuation
+    if (!/[a-zA-Z0-9]/.test(alias)) {
+      continue;
+    }
+
+    result.push(alias);
+  }
+
+  // Sort alphabetically
+  return result.sort((a, b) => a.localeCompare(b));
+}
+
+/**
+ * Convert raw SPARQL result to AircraftEntry
+ */
+function resultToEntry(result: AircraftQueryResult): AircraftEntry {
+  const id = extractEntityId(result.aircraft.value);
+  const name = result.aircraftLabel.value;
+  const aliases = processAliases(result.aliases?.value, name);
+
+  return { id, name, aliases };
+}
+
+// ============================================================================
 // Main Entry Point
 // ============================================================================
 
