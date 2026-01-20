@@ -3,9 +3,9 @@
 ## v1.0 - Complete Aircraft Guessing Game
 > Fully migrate to plane-specific guessing with proper data population, working game modes, and aviation-specific clues.
 
-### Phase 1: Legacy Nomenclature Cleanup
+### Phase 1: Legacy Nomenclature Cleanup [COMPLETED]
 **Objective:** Remove all ship/Keel references and establish consistent aircraft terminology throughout the codebase.
-**Research:** No
+**Status:** COMPLETED (16 commits, 22 files changed)
 **Scope:**
 - Rename `ship-list.json` to `aircraft-list.json`
 - Update component props (shipName -> aircraftName, etc.)
