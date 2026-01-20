@@ -21,7 +21,6 @@ export function SpecsClue({
   className = '',
 }: SpecsClueProps) {
   const specs = [
-    { label: 'Role', value: data.class },
     { label: 'Manufacturer', value: data.manufacturer },
     { label: 'Wingspan', value: data.wingspan },
     { label: 'First Flight', value: data.firstFlight },
