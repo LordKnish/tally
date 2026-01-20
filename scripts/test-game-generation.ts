@@ -26,6 +26,8 @@ interface ModeConfig {
   yearMin: number | null;
   yearMax: number | null;
   aircraftTypes: string[];
+  /** Use subclass path (P279+) instead of direct instance (P31) for type matching */
+  useSubclassPath?: boolean;
 }
 
 const GAME_MODES: Record<GameModeId, ModeConfig> = {
@@ -49,13 +51,9 @@ const GAME_MODES: Record<GameModeId, ModeConfig> = {
     yearMin: 1970,  // Relaxed from 1980 to include more aircraft
     yearMax: null,
     aircraftTypes: [
-      'Q210932',    // airliner
-      'Q197380',    // transport aircraft
-      'Q1420024',   // business jet
-      'Q329014',    // cargo aircraft
-      'Q1261534',   // wide-body aircraft
-      'Q2996551',   // narrow-body aircraft
+      'Q210932',    // airliner (uses subclass path to find Boeing 747, Airbus A320, etc.)
     ],
+    useSubclassPath: true,  // Query subclasses of airliner (Boeing 747-400, A320, etc.)
   },
   ww2: {
     id: 'ww2',
@@ -126,11 +124,19 @@ function buildCountQuery(mode: ModeConfig): string {
   const typeValues = mode.aircraftTypes.map((t) => `wd:${t}`).join(' ');
   const yearFilter = buildYearFilter(mode);
 
+  // For subclass path: find types that are subclasses of baseType, then find instances
+  // For direct: find instances directly of the type
+  const typeMatchClause = mode.useSubclassPath
+    ? `VALUES ?baseType { ${typeValues} }
+  ?type wdt:P279+ ?baseType .
+  ?aircraft wdt:P31 ?type .`
+    : `VALUES ?type { ${typeValues} }
+  ?aircraft wdt:P31 ?type .`;
+
   return `
 SELECT (COUNT(DISTINCT ?aircraft) AS ?count)
 WHERE {
-  VALUES ?type { ${typeValues} }
-  ?aircraft wdt:P31 ?type .
+  ${typeMatchClause}
   ?aircraft wdt:P18 ?image .
 
   OPTIONAL { ?aircraft wdt:P606 ?firstFlight . }
