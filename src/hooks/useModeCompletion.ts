@@ -11,7 +11,8 @@ import {
   ALL_MODE_IDS,
 } from '../types/modes';
 
-const STORAGE_KEY = 'keel-daily-completion';
+const STORAGE_KEY = 'tally-daily-completion';
+const LEGACY_STORAGE_KEY = 'keel-daily-completion';
 
 /**
  * Get today's date in ISO format (YYYY-MM-DD).
@@ -21,11 +22,36 @@ function getToday(): string {
 }
 
 /**
+ * Migrate data from legacy key if present.
+ * Preserves user data from the old keel-daily-completion key.
+ */
+function migrateFromLegacyKey(): void {
+  try {
+    const legacyData = localStorage.getItem(LEGACY_STORAGE_KEY);
+    const newData = localStorage.getItem(STORAGE_KEY);
+
+    // Only migrate if legacy data exists and new key doesn't
+    if (legacyData && !newData) {
+      localStorage.setItem(STORAGE_KEY, legacyData);
+      localStorage.removeItem(LEGACY_STORAGE_KEY);
+    } else if (legacyData && newData) {
+      // Both exist - just remove legacy key
+      localStorage.removeItem(LEGACY_STORAGE_KEY);
+    }
+  } catch {
+    // Silently ignore migration errors
+  }
+}
+
+/**
  * Load completion data from localStorage.
  * Returns empty completion if data is missing or from a different day.
  */
 function loadCompletion(): DailyCompletion {
   try {
+    // Attempt migration from legacy key
+    migrateFromLegacyKey();
+
     const stored = localStorage.getItem(STORAGE_KEY);
     if (!stored) {
       return { date: getToday(), modes: {} };
