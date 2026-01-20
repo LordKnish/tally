@@ -107,7 +107,7 @@
   text-align: center;
 }
 
-.game-result__ship-detail {
+.game-result__aircraft-detail {
   font-size: var(--font-size-sm);
   color: var(--color-text-muted);
   text-align: center;
