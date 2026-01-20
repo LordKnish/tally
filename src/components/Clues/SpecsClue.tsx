@@ -13,8 +13,7 @@ export interface SpecsClueProps {
 
 /**
  * SpecsClue displays aircraft technical specifications (Turn 2).
- * Shows: Wingspan, Weight, First Flight date.
- * Note: Type removed since players now guess by type name.
+ * Shows: Manufacturer, Wingspan, First Flight date.
  */
 export function SpecsClue({
   data,
@@ -22,8 +21,8 @@ export function SpecsClue({
   className = '',
 }: SpecsClueProps) {
   const specs = [
+    { label: 'Manufacturer', value: data.manufacturer },
     { label: 'Wingspan', value: data.wingspan },
-    { label: 'Weight', value: data.weight },
     { label: 'First Flight', value: data.firstFlight },
   ];
 
