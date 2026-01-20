@@ -361,7 +361,7 @@ function App() {
             />
             <PhotoReveal
               photoUrl={gameData.clues.photo}
-              shipName={gameData.aircraft.name}
+              aircraftName={gameData.aircraft.name}
               revealed={getClueRevealed(4) || currentTurn >= 5}
             />
           </>
