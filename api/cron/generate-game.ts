@@ -223,7 +223,7 @@ const BONUS_MODE_IDS: GameModeId[] = ['commercial', 'ww2', 'ww1', 'helicopters',
 
 async function getUsedAircraftIds(mode: GameModeId = 'main'): Promise<string[]> {
   try {
-    const result = await sql`SELECT wikidata_id FROM used_ships WHERE mode = ${mode}`;
+    const result = await sql`SELECT wikidata_id FROM tally_used_aircraft WHERE mode = ${mode}`;
     return result.rows.map((row) => row.wikidata_id);
   } catch (error) {
     console.error(`Failed to fetch used aircraft for ${mode}:`, error);
@@ -234,7 +234,7 @@ async function getUsedAircraftIds(mode: GameModeId = 'main'): Promise<string[]> 
 async function markAircraftUsed(id: string, name: string, mode: GameModeId = 'main'): Promise<void> {
   try {
     await sql`
-      INSERT INTO used_ships (wikidata_id, name, used_date, mode)
+      INSERT INTO tally_used_aircraft (wikidata_id, name, used_date, mode)
       VALUES (${id}, ${name}, CURRENT_DATE, ${mode})
       ON CONFLICT (wikidata_id, mode) DO NOTHING
     `;
@@ -254,17 +254,17 @@ async function saveGameData(gameData: GameData, mode: GameModeId = 'main'): Prom
 
   try {
     await sql`
-      INSERT INTO game_data (
+      INSERT INTO tally_game_data (
         game_date,
         mode,
-        ship_id,
-        ship_name,
-        ship_aliases,
+        aircraft_id,
+        aircraft_name,
+        aircraft_aliases,
         silhouette,
         clues_specs_class,
-        clues_specs_displacement,
-        clues_specs_length,
-        clues_specs_commissioned,
+        clues_specs_manufacturer,
+        clues_specs_wingspan,
+        clues_specs_first_flight,
         clues_context_nation,
         clues_context_conflicts,
         clues_context_status,
@@ -288,14 +288,14 @@ async function saveGameData(gameData: GameData, mode: GameModeId = 'main'): Prom
         ${clues.photo}
       )
       ON CONFLICT (game_date, mode) DO UPDATE SET
-        ship_id = EXCLUDED.ship_id,
-        ship_name = EXCLUDED.ship_name,
-        ship_aliases = EXCLUDED.ship_aliases,
+        aircraft_id = EXCLUDED.aircraft_id,
+        aircraft_name = EXCLUDED.aircraft_name,
+        aircraft_aliases = EXCLUDED.aircraft_aliases,
         silhouette = EXCLUDED.silhouette,
         clues_specs_class = EXCLUDED.clues_specs_class,
-        clues_specs_displacement = EXCLUDED.clues_specs_displacement,
-        clues_specs_length = EXCLUDED.clues_specs_length,
-        clues_specs_commissioned = EXCLUDED.clues_specs_commissioned,
+        clues_specs_manufacturer = EXCLUDED.clues_specs_manufacturer,
+        clues_specs_wingspan = EXCLUDED.clues_specs_wingspan,
+        clues_specs_first_flight = EXCLUDED.clues_specs_first_flight,
         clues_context_nation = EXCLUDED.clues_context_nation,
         clues_context_conflicts = EXCLUDED.clues_context_conflicts,
         clues_context_status = EXCLUDED.clues_context_status,

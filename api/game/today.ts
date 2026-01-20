@@ -61,8 +61,8 @@ export default async function handler(
     // Handle 'all' query - return available modes with status
     if ('all' in request.query) {
       const result = await sql`
-        SELECT mode, game_date, ship_name, clues_specs_class
-        FROM game_data
+        SELECT mode, game_date, aircraft_name, clues_specs_class
+        FROM tally_game_data
         WHERE game_date = ${today}::date
         ORDER BY mode
       `;
@@ -72,7 +72,7 @@ export default async function handler(
           row.mode || 'main',
           {
             date: row.game_date?.toISOString().split('T')[0] || null,
-            aircraft: row.ship_name,
+            aircraft: row.aircraft_name,
             class: row.clues_specs_class,
           },
         ])
@@ -112,20 +112,20 @@ export default async function handler(
     const result = await sql`
       SELECT
         game_date,
-        ship_id,
-        ship_name,
-        ship_aliases,
+        aircraft_id,
+        aircraft_name,
+        aircraft_aliases,
         silhouette,
         clues_specs_class,
-        clues_specs_displacement,
-        clues_specs_length,
-        clues_specs_commissioned,
+        clues_specs_manufacturer,
+        clues_specs_wingspan,
+        clues_specs_first_flight,
         clues_context_nation,
         clues_context_conflicts,
         clues_context_status,
         clues_trivia,
         clues_photo
-      FROM game_data
+      FROM tally_game_data
       WHERE game_date = ${today}::date AND (mode = ${mode} OR (mode IS NULL AND ${mode} = 'main'))
       LIMIT 1
     `;
@@ -145,17 +145,17 @@ export default async function handler(
     const gameData: GameData = {
       date: row.game_date.toISOString().split('T')[0],
       aircraft: {
-        id: row.ship_id,
-        name: row.ship_name,
-        aliases: row.ship_aliases || [],
+        id: row.aircraft_id,
+        name: row.aircraft_name,
+        aliases: row.aircraft_aliases || [],
       },
       silhouette: row.silhouette,
       clues: {
         specs: {
           class: row.clues_specs_class,
-          manufacturer: row.clues_specs_displacement,
-          wingspan: row.clues_specs_length,
-          firstFlight: row.clues_specs_commissioned,
+          manufacturer: row.clues_specs_manufacturer,
+          wingspan: row.clues_specs_wingspan,
+          firstFlight: row.clues_specs_first_flight,
         },
         context: {
           nation: row.clues_context_nation,
